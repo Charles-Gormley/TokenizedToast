@@ -13,7 +13,7 @@ AI-Curated Newsletter. Where we pull in current news articles daily, select arti
 6. Email Sending
 7. MLOps
 
-### Building & Traing Topic Modelings Models
+### 1. Building & Traing Topic Modelings Models
 ##### Datasets 
 1. https://www.kaggle.com/datasets/rmisra/news-category-dataset
 2. https://www.kaggle.com/datasets/jeet2016/us-financial-news-articles
