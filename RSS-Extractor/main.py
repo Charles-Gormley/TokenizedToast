@@ -4,6 +4,9 @@ import pickle
 import json
 from tqdm import tqdm
 
+from article_extraction import extract_article
+from article_extraction import extract_feed
+
 
 with open('rss-feeds.pkl', 'rb') as f:
     feeds = pickle.load(f) # Single list of feeds
