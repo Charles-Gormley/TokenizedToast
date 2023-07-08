@@ -37,7 +37,11 @@ for i in tqdm(range(len(feeds)), total=len(feeds)):
     except:
         pass
     
-    content_archive.append(output)
+    try: 
+        output['articles']
+        content_archive.append(output)
+    except:
+        pass
 
 from datetime import datetime
 
