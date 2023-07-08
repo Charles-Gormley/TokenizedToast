@@ -7,11 +7,16 @@ from tqdm import tqdm
 from article_extraction import extract_article
 from article_extraction import extract_feed
 
+import os
+os.chdir("C:/Users/Charl/Documents/Projects/TokenizedToast/ETL/RSS-Extractor")
+
 
 with open('rss-feeds.pkl', 'rb') as f:
     feeds = pickle.load(f) # Single list of feeds
 print(len(feeds))
 
+# TODO: Delete
+feeds = feeds[0:10]
 
 content_archive = []
 for i in tqdm(range(len(feeds)), total=len(feeds)):
