@@ -45,7 +45,7 @@ def train_kmeans(model_dict: dict,
                  n_init: int=10, 
                  max_iter: int=300, 
                  tol: float=1e-4):
-
+    
     model = KMeans(n_clusters=n_clusters, 
                    init=init, 
                    n_init=n_init, 
@@ -57,7 +57,6 @@ def train_kmeans(model_dict: dict,
 
     # Add model parameters to the dictionary
     model_dict.update(model.get_params())
-
     return model, model_dict
 
 # ######### Evaluation Methods #########

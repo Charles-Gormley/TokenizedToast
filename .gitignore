@@ -1,2 +1,4 @@
 *.dict
 *.db
+*.pkl
+*.pyc
