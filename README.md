@@ -1,5 +1,7 @@
 # TokenizedToast
+![ToastLogo-removebg-preview](https://github.com/Charles-Gormley/TokenizedToast/assets/76138796/196513e4-dac5-46a8-9134-34e7b9ee51e3)
 AI-Curated Newsletter. Where we pull in current news articles daily, select articles for a particular user, and generate a short-educative newsletter based off of these articles.
+
 
 # TokenizedToast
 AI-Curated Newsletter. Where we pull in current news articles daily, select articles for a particular user, and generate a short-educative newsletter based off of these articles.
