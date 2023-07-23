@@ -69,5 +69,3 @@ class BERT:
 
         reduced_embedding = umap.UMAP(n_components=3).fit_transform(array)
         return reduced_embedding
-
-        

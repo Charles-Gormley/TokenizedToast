@@ -7,13 +7,12 @@ from tqdm import tqdm
 from article_extraction import extract_article
 from article_extraction import extract_feed
 
-import os
-os.chdir("C:/Users/Charl/Documents/Projects/TokenizedToast/ETL/RSS-Extractor")
+
+# Load the JSON data from the file
+with open('rss-feeds.json', 'r') as f:
+    feeds = json.load(f)
 
 
-with open('rss-feeds.pkl', 'rb') as f:
-    feeds = pickle.load(f) # Single list of feeds
-print(len(feeds))
 
 
 
