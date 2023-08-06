@@ -1,6 +1,9 @@
 import os
 
-CRON_PATHS = ['/etc/cron.d', '/etc/cron.daily', '/etc/cron.hourly', '/etc/cron.weekly']
+CRON_PATHS = ['/etc/cron.d', 
+              '/etc/cron.daily', 
+              '/etc/cron.hourly', 
+              '/etc/cron.weekly']
 
 def disable_cron_jobs():
     for path in CRON_PATHS:
