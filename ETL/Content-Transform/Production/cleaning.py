@@ -1,36 +1,56 @@
-import pandas as pd
-import numpy as np
+import json
 from datetime import datetime, timedelta
-
 
 class Cleaner:
     def __init__(self, json_file_path:str):
-        self.df = pd.read_json(json_file_path)
-        
+        with open(json_file_path, 'r') as f:
+            self.data = json.load(f)
+
     def flatten_initial_dataframe(self):
-        array_of_dicts = np.concatenate(np.concatenate(self.df.values))
-        self.df = pd.DataFrame(list(array_of_dicts))
-        
+        flattened_data = []
+        for sublist in self.data:
+            if isinstance(sublist, list):
+                for item in sublist:
+                    if isinstance(item, list):
+                        for subitem in item:
+                            if isinstance(subitem, dict):
+                                flattened_data.append(subitem)
+                    elif isinstance(item, dict):
+                        flattened_data.append(item)
+            elif isinstance(sublist, dict):
+                flattened_data.append(sublist)
+        self.data = flattened_data
+
+
     def remove_undated_articles(self):
-        self.df = self.df[self.df.date != "None"]
+        self.data = [item for item in self.data if isinstance(item, dict) and item.get('date') != 'None']
+
 
     def remove_older_articles(self, date_column:str):
-        # convert date_column to datetime if it isn't already
-        self.df[date_column] = pd.to_datetime(self.df[date_column])
-
         # get date three days ago
         three_days_ago = datetime.now() - timedelta(days=3)
 
-        # select only rows where date_column is later than three days ago
-        self.df = self.df.loc[self.df[date_column] > three_days_ago]
+        cleaned_data = []
+        for item in self.data:
+            # check if the item is a dictionary and contains the 'date' key
+            if isinstance(item, dict) and date_column in item:
+                # convert date_column to datetime if it isn't already
+                item_date = datetime.strptime(item[date_column], "%Y-%m-%d") # Assuming the date is in 'YYYY-MM-DD' format
+
+                # select only rows where date_column is later than three days ago
+                if item_date > three_days_ago:
+                    cleaned_data.append(item)
+                    
+        self.data = cleaned_data
+
 
     def remove_empty_articles(self):
         pass
 
-    def clean_dataframe(self) -> pd.DataFrame:
+    def clean_data(self) -> list:
         '''Main Function'''
         self.flatten_initial_dataframe()
         self.remove_undated_articles()
-        self.remove_older_articles()
+        self.remove_older_articles('date') # Assuming 'date' is the key for dates in your dictionaries
         
-        return self.df
+        return self.data

@@ -16,10 +16,19 @@ bucket_name = 'toast-daily-content'
 file_key = 'cleaned-data.pkl'
 destination_path = 'cleaned-data.pkl'
 
-download_from_s3(bucket_name, file_key, destination_path)
+
+
+if os.getcwd() == "C:\Users\Charl\Documents\Projects\TokenizedToast":
+    print("In local computer")
+    df_path = 'cleaned-data.pkl'
+
+else:
+    download_from_s3(bucket_name, file_key, destination_path)
+    df_path = 'cleaned-data.pkl'
+    
 
 logging.info("Loading dataframe from pickle file")
-df = encoder.load_df('cleaned-data.pkl')
+df = encoder.load_df(df_path)
 
 logging.info("Starting encoding dataframe column")
 encoded_df = encoder.encode_dataframe_column(df, "content")

@@ -7,14 +7,15 @@ from tqdm import tqdm
 from article_extraction import extract_article
 from article_extraction import extract_feed
 
+import os
+os.chdir("C:/Users/Charl/Documents/Projects/TokenizedToast/ETL/RSS-Extractor")
 
 # Load the JSON data from the file
 with open('rss-feeds.json', 'r') as f:
     feeds = json.load(f)
 
 
-
-
+feeds = feeds[:10]
 
 content_archive = []
 for i in tqdm(range(len(feeds)), total=len(feeds)):
@@ -25,7 +26,7 @@ for i in tqdm(range(len(feeds)), total=len(feeds)):
     thread = threading.Thread(target=extract_feed, args=(output, output_queue,))
     try:
         thread.start()
-        thread.join(timeout=20)
+        thread.join(timeout=15)
         if thread.is_alive():
             thread.terminate()
             thread.join()
