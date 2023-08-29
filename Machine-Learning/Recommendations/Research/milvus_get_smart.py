@@ -52,28 +52,33 @@ logging.info("Creating Collection")
 # if collection_name in existing_collections:
 #     connections.drop_collection(collection_name)
 
-for i in range(len(vectors)):
-    for element in vectors[i]:
-        if 
-        print(type(element))
-    if type(vectors[i]) != type(id_vectors[i]):
-        print("Yuh")
-
+id_vectors = [item for sublist in id_vectors for item in sublist]
 assert len(id_vectors) == len(vectors), "Lengths of IDs and vectors do not match!"
 
 collection = Collection(collection_name, schema=schema)
 
 
 # Insert data
-ids = collection.insert({"id": id_vectors,"embedding": vectors})
+logging.info("Inserting Data")
+insert_data = [id_vectors, vectors]
+collection.insert(insert_data)
 
 # Flush data (makes sure data is written)
-connections.flush([collection_name])
+collection.flush()
+
+index = {
+    "index_type": "IVF_FLAT",
+    "metric_type": "L2",
+    "params": {"nlist": 128},
+}
+collection.create_index("embedding", index)
+
 
 # Search in the collection
 search_params = {"metric_type": "L2", "params": {"nprobe": 10}}
-results = connections.search(collection_name, [vectors[0]], search_params, limit=5)
+results = collection.search(anns_field="embedding", 
+                            data = vectors[0], 
+                            param = search_params, 
+                            limit=5, 
+                            output_fields=["id"])
 
-# Print the results
-for hit in results[0]:
-    print(hit.id, hit.distance)
