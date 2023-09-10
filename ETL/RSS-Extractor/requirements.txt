@@ -1,3 +1,0 @@
-newspaper3k
-tqdm
-feedparser

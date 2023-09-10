@@ -14,9 +14,6 @@ os.chdir("C:/Users/Charl/Documents/Projects/TokenizedToast/ETL/RSS-Extractor")
 with open('rss-feeds.json', 'r') as f:
     feeds = json.load(f)
 
-
-feeds = feeds[:10]
-
 content_archive = []
 for i in tqdm(range(len(feeds)), total=len(feeds)):
     

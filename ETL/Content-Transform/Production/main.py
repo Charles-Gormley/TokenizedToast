@@ -1,4 +1,4 @@
-from cleaningnew import Cleaner
+from cleaning import Cleaner
 import pickle
 
 content_json_path = 'C:/Users/Charl/Documents/Projects/TokenizedToast/ETL/RSS-Extractor/content.json'
