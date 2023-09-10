@@ -38,6 +38,9 @@ class Recommendations:
             self.index = faiss.IndexHNSWFlat(dim, 32)  # 32 is the maximum number of outgoing links in the HNSW graph
         elif self.indexing_technique == "OPQ":
             self.index = faiss.IndexOPQ(dim, 8, 8)  # 8 is the bits per sub-vector
+        #TODO: Add in clustering techniques which could be trained on subtopics of data.
+
+        self.set_search_data = False
 
 
     def _get_embedding_dim(self):
@@ -58,22 +61,26 @@ class Recommendations:
     def check_trained(self) -> bool:
         return self.index.is_trained
     
-    def train_index(self, training_data:np.array, search_data:np.array):
+    def train_index(self, training_data:np.array, search_data:np.array, index_data:np.array=None):
         self.index.train(training_data)
-        self.index.add(search_data)
+        self.index.add_with_ids(search_data, index_data)
 
     def add_vectors_to_index(self, search_data:np.array):
         """Add data vectors to the FAISS index."""
-        self.search_data = search_data        
+        self.search_data = search_data   
+        self.set_search_data = True     
         self.index.add(search_data)
+
+    def get_ids(self):
+        return self.index.id_map
 
     def create_test_data(self, num_samples=1000):
         """Generate synthetic test data and add it to the FAISS index."""
-        test_data = np.random.random((num_samples, self.input.shape[-1])).astype('float32')
-        self.add_vectors_to_index(test_data)
-
- 
-
+        test_data = np.random.uniform(low=-2, high=2, size=(num_samples, self.embedding_dim)).astype('float32')
+        
+        if not self.set_search_data:
+            self.add_vectors_to_index(test_data)
+        return test_data
 
     def search(self, input:np.array, k=None):
         """Search using the predefined input and k."""
@@ -95,8 +102,9 @@ class Recommendations:
         
         # List to keep track of vectors to keep
         unique_vectors = []
+        unique_indices = []
         
-        for i, vec in enumerate(self.search_data):
+        for _, vec in enumerate(self.search_data):
             distances, indices = self.index.search(vec.reshape(1, -1), 2)  # Searching for the two closest neighbors (itself and the next closest one)
             
             # If the second closest vector (i.e., the closest one other than the vector itself) has a distance greater than the threshold, 
@@ -105,7 +113,7 @@ class Recommendations:
                 unique_vectors.append(vec)
         
         # Replace self.input with the unique vectors
-        self.search_data = np.array(unique_vectors, dtype='float32')
+        self.search_data = np.array(unique_vectors, dtype='float64')
         
         # Update the index with only the unique vectors
         self.index.reset()  # Clear the current index
@@ -144,5 +152,3 @@ def test_recommender(vector_embedding="BERT",
     assert indices.shape[0] == batch
     print(f"Queried vectors found nearest neighbors at indices\n {indices} \nwith distances\n {distances}")
     print("All tests passed!")
-
-test_recommender()
