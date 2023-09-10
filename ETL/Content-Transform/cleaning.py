@@ -18,7 +18,6 @@ class Cleaner:
                         pass
         array_of_dicts = np.concatenate(new_dicts)
         self.df = pd.DataFrame(list(array_of_dicts))
-    
     def remove_undated_articles(self):
         self.df = self.df[self.df.date != "None"]
 

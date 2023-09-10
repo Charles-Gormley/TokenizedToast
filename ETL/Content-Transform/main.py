@@ -1,8 +1,10 @@
 from cleaning import Cleaner
 import pickle
 
-content_json_path = 'C:/Users/Charl/Documents/Projects/TokenizedToast/ETL/RSS-Extractor/content.json'
+content_json_path = '/home/ec2-user/feed_parser/content.json'
 cleaner = Cleaner(content_json_path)
 df = cleaner.clean_data()
 
-df.to_pickle('cleaned-dataframe.pkl')
+
+with open('cleaned-data.pkl', 'wb') as f:
+    pickle.dump(df, f)

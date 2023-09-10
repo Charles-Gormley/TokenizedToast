@@ -2,48 +2,13 @@ import newspaper
 import feedparser
 import queue
 import threading
-
 import logging
-
-def extract_article(url):
-    """
-    Extracts the title and text of an article from the given URL.
-    
-    Args:
-        url (str): The URL of the article.
-        
-    Returns:
-        A tuple containing the title and text of the article, respectively.
-    """
-    # create a newspaper Article object
-    logging.debug("Starting Newspaper Article Extraction %s", url)
-
-    config = newspaper.Config()
-    config.request_timeout = 45
-    article = newspaper.Article(url)
-    logging.debug("Obtained Article %s", url)
-
-
-    # download and parse the article
-    article.download()
-    logging.debug("Downloaded Article %s", url)
-
-    article.parse()
-    logging.debug("Parsed Article %s", url)
-
-    # extract the title and text of the article
-    title = article.title
-    text = article.text
-    published_date = article.publish_date
-
-    # return the title and text as a tuple
-    return title, text, published_date
 
 def process_feed(feed):
     output_queue = queue.Queue()
     thread = threading.Thread(target=extract_feed, args=(feed, output_queue,))
     try:
-        
+
         thread.daemon = True
         thread.start()
         logging.debug("Thread Started: %s", feed)
@@ -68,7 +33,7 @@ def process_feed(feed):
 def extract_feed(feed_url, output_queue ):
     links = []
     output = dict()
-    
+
     try:
         feed = feedparser.parse(feed_url)
         print(feed_url)
@@ -93,8 +58,59 @@ def extract_feed(feed_url, output_queue ):
     except:
         logging.debug("Feed Failed %s", feed_url)
         output['articles'] = links
-        
+
 
     output_queue.put(output)
 
+def extract_article(url):
+    """
+    Extracts the title and text of an article from the given URL.
+    
+    Args:
+        url (str): The URL of the article.
 
+    Returns:
+        A tuple containing the title and text of the article, respectively.
+    """
+    # create a newspaper Article object
+    logging.debug("Starting Newspaper Article Extraction %s", url)
+
+    config = newspaper.Config()
+    config.request_timeout = 45
+    article = newspaper.Article(url)
+    logging.debug("Obtained Article %s", url)
+
+
+    # download and parse the article
+    article.download()
+    logging.debug("Downloaded Article %s", url)
+
+    article.parse()
+    logging.debug("Parsed Article %s", url)
+
+    # extract the title and text of the article
+    title = article.title
+    text = article.text
+    
+    logging.debug("Starting Newspaper Article Extraction %s", url)
+
+    config = newspaper.Config()
+    config.request_timeout = 45
+    article = newspaper.Article(url)
+    logging.debug("Obtained Article %s", url)
+
+
+    # download and parse the article
+    article.download()
+    logging.debug("Downloaded Article %s", url)
+
+    article.parse()
+    logging.debug("Parsed Article %s", url)
+
+    # extract the title and text of the article
+    title = article.title
+    text = article.text
+    published_date = article.publish_date
+
+    # return the title and text as a tuple
+    return title, text, published_date
