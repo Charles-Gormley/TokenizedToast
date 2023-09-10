@@ -27,7 +27,7 @@ def stop_ec2_instance(instance_id):
 
 logging.info("Main function completed")
 
-os.chdir("/home/ec2-user/feed_parser")
+os.chdir("/home/ec2-user/TokeizedToanst/ETL/RSS-Extractor")
 
 # Load the JSON data from the file
 with open('rss-feeds.json', 'r') as f:
