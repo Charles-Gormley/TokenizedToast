@@ -34,4 +34,3 @@ print(distances)
 print(indices)
 for i in indices[0]:
     print(content.grab_article(i))
-# TODO: Connect back to database
