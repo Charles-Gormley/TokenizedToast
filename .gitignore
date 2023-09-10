@@ -2,3 +2,4 @@
 *.db
 *.pkl
 *.pyc
+*.json
