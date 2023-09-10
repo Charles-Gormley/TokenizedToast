@@ -80,7 +80,7 @@ save_to_s3("toast-daily-content", "content.json", "content.json")
 
 # Section: Pandas Dataframe
 logging.info("Running pandas content transform")
-os.system("/usr/local/bin/python3.11 /home/ec2-user/Content-Transform/main.py")
+os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-Transform/main.py")
 
 logging.info("Saving pandas dataframe to s3")
 save_to_s3("toast-daily-content", "cleaned-data.pkl", "cleaned-data.pkl")
