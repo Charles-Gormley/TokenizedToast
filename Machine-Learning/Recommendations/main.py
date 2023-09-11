@@ -9,7 +9,6 @@ content.load_df()
 content.load_tensors()
 search_data, index_data = content.load_encodings()
 
-
 print(index_data.shape)
 print(search_data.shape)
 print(type(index_data))
