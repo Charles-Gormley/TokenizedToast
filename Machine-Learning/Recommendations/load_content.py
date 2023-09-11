@@ -34,7 +34,7 @@ class ProcessContent:
             self.id_vectors = np.array(self.id_vectors)
 
             assert len(self.id_vectors) == len(self.vectors), "Lengths of IDs and vectors do not match!"
-            assert len(self.id_vectors) == len(self.df["index"]), "Index length of content dataframe & encodings do not match! ID Length: " + str(self.id_vectors) + \
-                " Index DF Length: " + str(self.df["index"])
+            assert len(self.id_vectors) == len(self.df["index"]), "Index length of content dataframe & encodings do not match! ID Length: " + str(len(self.id_vectors)) + \
+                " Index DF Length: " + str(len(self.df["index"]))
             return self.vectors, self.id_vectors
             
