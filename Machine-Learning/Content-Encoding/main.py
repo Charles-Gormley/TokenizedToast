@@ -61,3 +61,7 @@ save_to_s3("encoder-milvus-bucket", encoded_df_file, encoded_df_file)
 save_to_s3("encoder-milvus-bucket", embeddings_file, embeddings_file)
 
 logging.info("Stopping Encoding | Milvus Instance")
+
+# Section: Shutting off instance
+logging.info("Process Finished Shuting off ec2 instance")
+stop_ec2_instance("i-061dff9fc11bb2250")

@@ -64,6 +64,8 @@ logging.info("Dumping Json")
 json_data = json.dumps(content_archive)
 file_path = 'content.json'
 
+os.chdir()
+
 logging.info("Deleting old content.json file if it exists")
 if os.path.exists(file_path):
     os.remove(file_path)

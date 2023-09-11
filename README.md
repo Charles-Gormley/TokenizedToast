@@ -8,8 +8,9 @@ AI-Curated Newsletter. Where we pull in current news articles daily, select arti
 AI-Curated Newsletter. Where we pull in current news articles daily, select articles for a particular user, and generate a short-educative newsletter based off of these articles.
 
 ## Requirements
-Python: 3.10
-Run: pip install -r requirments.txt
+* Python: 3.10
+* Run: pip install -r requirments.txt
+
 
 ## Project Sections
 1. Building & Traing Topic Modelings Models
