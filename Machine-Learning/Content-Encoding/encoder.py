@@ -18,8 +18,11 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 model.eval()
 
-def load_df(df_path):
-    return pd.read_pickle(df_path)
+def load_df(df_path) -> pd.DataFrame:
+    df = pd.read_pickle(df_path)
+    df.dropna(how="all", inplace=True)
+    df.drop_duplicates(subset="content", inplace=True)
+    return df
 
 def encode_and_pool(text):
     logging.debug("Starting encoding and pooling")

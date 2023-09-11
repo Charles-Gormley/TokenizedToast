@@ -38,6 +38,7 @@ download_from_s3(bucket_name, file_key, destination_path)
 
 logging.info("Loading dataframe from pickle file")
 df = load_df('cleaned-data.pkl')
+
 logging.info("Length of DataFrame Indices: %d", len(df["index"]))
 
 logging.info("Starting encoding dataframe column")
