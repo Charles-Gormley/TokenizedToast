@@ -28,6 +28,7 @@ class ProcessContent:
             self.vectors = np.vstack(encodings_list)
 
             ids = self.db['ID']
+            print(len(ids))
             ids_list = [tensor.cpu().numpy() for tensor in ids]
             id_vectors = np.vstack(ids_list).tolist()
             self.id_vectors = [item for sublist in id_vectors for item in sublist]
