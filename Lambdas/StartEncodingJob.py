@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     
     main_path = "/home/ec2-user/TokenizedToast/Machine-Learning/Content-Encoding/main.py"
     
-    git_command = 'sudo -u ec2-user cd TokenizedToast\nsudo -u ec2-user git fetch\nsudo -u ec2-user git pull'
+    git_command = 'sudo -u ec2-user cd /home/ec2-user/TokenizedToast >> /tmp/git_process.log 2>&1\nsudo -u ec2-user git fetch >> /tmp/git_process.log 2>&1\nsudo -u ec2-user git pull >> /tmp/git_process.log 2>&1'
     main_command = 'sudo -u ec2-user /usr/local/bin/python3.9 ' + main_path + ' >> /tmp/temp.log 2>&1'
     
     # Start the instance
