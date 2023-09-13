@@ -11,8 +11,9 @@ def lambda_handler(event, context):
     instance_id = 'i-0ea95298232d8ed99'
     
     main_path = "/home/ec2-user/TokenizedToast/ETL/RSS-Extractor/main.py"
+    git_path = "/home/ec2-user/TokenizedToast/Misc/Helper-Scripts/setup_git_ec2.py"
     
-    git_command = 'sudo -u ec2-user cd /home/ec2-user/TokenizedToast >> /tmp/git_process.log 2>&1\nsudo -u ec2-user git fetch >> /tmp/git_process.log 2>&1\nsudo -u ec2-user git pull >> /tmp/git_process.log 2>&1'
+    git_command = 'sudo -u ec2-user /usr/local/bin/python3.11 ' + git_path + ' >> /tmp/git_process.log 2>&1'
     main_command = 'sudo -u ec2-user /usr/local/bin/python3.11 ' + main_path + ' >> /tmp/temp.log 2>&1'
     
     # Start the instance
