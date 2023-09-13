@@ -5,8 +5,20 @@ import newspaper
 from multiprocessing import Pool
 import os
 import json
+import argparse
 
 from article_extraction import process_feed
+
+import argparse
+
+# Initialize the argument parser
+parser = argparse.ArgumentParser(description="Process some arguments.")
+
+# Add the optional argument. If it's not provided, its value will be set to False.
+parser.add_argument("--article_num", type=int, default=False,
+                    help="Number of the article. Default is False.")
+
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO,
@@ -29,10 +41,18 @@ logging.info("Main function completed")
 
 os.chdir("/home/ec2-user/TokeizedToanst/ETL/RSS-Extractor")
 
+# Parse the provided arguments
+args = parser.parse_args()
+
+# Access the article_num value
+set_article_num = args.article_num
+
 # Load the JSON data from the file
 with open('rss-feeds.json', 'r') as f:
     FEEDS = json.load(f)
-    
+
+if set_article_num:
+    FEEDS = FEEDS[:set_article_num] # This is for testing purposes 
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
