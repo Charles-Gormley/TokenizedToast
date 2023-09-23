@@ -19,12 +19,18 @@ recommender.eliminate_duplicate_vectors()
 
 # TODO: Create new drop duplicates function. 
 
+
 #TODO: Load in data from query BERT Embeddings
 query_data = recommender.create_test_data(num_samples=1)
 query_data = search_data[0]
 #TODO: Check if query BERT embeddings are valid
 
+
 #TODO: Decide on design of query data. It could have 2 dimensions for each user and a 3rd dimension for every user. Then maybe we could either just iteratively recommend OR 1) Flatten 2) Recommend
+
+# Grab Query Data .json with emails, list of encodings, user's summarization preferences. 
+# For each encoding obtain an article recommendation. 
+# For each recommendation send it to the GPT Summarizer 
 
 distances, seq_indices = recommender.search(query_data, 5)
 indices = index_data[seq_indices]
