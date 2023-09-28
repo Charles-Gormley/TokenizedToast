@@ -39,7 +39,7 @@ def stop_ec2_instance(instance_id):
 
 logging.info("Main function completed")
 
-os.chdir("/home/ec2-user/TokeizedToanst/ETL/RSS-Extractor")
+os.chdir("/home/ec2-user/TokeizedToast/ETL/RSS-Extractor")
 
 # Parse the provided arguments
 args = parser.parse_args()
@@ -83,8 +83,6 @@ logging.info("Actual Feeds: %s", str(pulled_feeds))
 logging.info("Dumping Json")
 json_data = json.dumps(content_archive)
 file_path = 'content.json'
-
-os.chdir()
 
 logging.info("Deleting old content.json file if it exists")
 if os.path.exists(file_path):
