@@ -1,13 +1,22 @@
-import sparknlp
-from sparknlp.pretrained import PretrainedPipeline
-from sparknlp.base import *
-from sparknlp.annotator import *
 from pyspark.ml import Pipeline
 
 import pandas as pd
 import torch
-
 from datetime import datetime
+
+
+import sparknlp
+from sparknlp.pretrained import PretrainedPipeline
+from sparknlp.base import *
+from sparknlp.annotator import *
+
+
+
+print("Spark NLP version: {}".format(sparknlp.version()))
+spark = sparknlp.start()
+
+print("Apache Spark version: {}".format(spark.version))
+
 now = datetime.now()
 m = str(now.month)
 d = str(now.day)
@@ -33,10 +42,8 @@ args = parser.parse_args()
 testing = args.testing
 
 
-spark = sparknlp.start()
 
-print("Spark NLP version: {}".format(sparknlp.version()))
-print("Apache Spark version: {}".format(spark.version))
+
 
 # PIPELINE CREATION
 clean_pipeline = PretrainedPipeline('clean_stop', lang = 'en')
