@@ -110,10 +110,10 @@ logging.info("Running pandas content transform")
 os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-Transform/main.py")
 
 logging.info("Saving pandas dataframe to s3")
-save_to_s3("toast-daily-content", cleaned_data_fn, cleaned_data_fn)
+# save_to_s3("toast-daily-content", cleaned_data_fn, cleaned_data_fn)
 
 # TODO: Trigger EMR Job.
 
 # Section: Shutting off instance
 logging.info("Process Finished Shuting off ec2 instance")
-stop_ec2_instance("i-0ea95298232d8ed99")
+# stop_ec2_instance("i-0ea95298232d8ed99")
