@@ -4,9 +4,24 @@ from sparknlp.base import *
 from sparknlp.annotator import *
 from pyspark.ml import Pipeline
 
-import pandas
+import pandas as pd
 import torch
+from datetime import date
+m = date.month
+d = date.day
+y = date.year
 
+
+import argparse
+# Initialize the argument parser
+parser = argparse.ArgumentParser(description="Process some arguments.")
+
+# Add the optional argument. If it's not provided, its value will be set to False.
+parser.add_argument("--testing", type=bool, default=False,
+                    help="Number of the article. Default is False.")
+# Parse the provided arguments
+args = parser.parse_args()
+testing = args.testing
 
 
 spark = sparknlp.start()
@@ -20,12 +35,25 @@ ner_pipeline = PretrainedPipeline('onto_recognize_entities_bert_large', lang = '
 finsen_pipeline = PretrainedPipeline("classifierdl_bertwiki_finance_sentiment_pipeline", "en")
 
 # Ingest the Data From S3
+if not testing:
+    df = spark.read.csv(f"s3://toast-daily-content/cleaned-data-{y}-{m}-{d}.pkl")
 
+# Test Dataframe
+else:
+    data = {
+        'index': [1, 2],
+        'link': ['http://example.com/1', 'http://example.com/2'],
+        'title': ['Title1', 'Title2'],
+        'content': [a, b],
+        'date': ['2023-01-01', '2023-01-02']
+    }
 
+    df = pd.DataFrame(data)
 
-ner_annot = ner_pipeline.fullAnnotate(data)[0]
-clean_annot = clean_pipeline.fullAnnotate(data)[0]
-finsen_annot = finsen_pipeline.fullAnnotate(data)[0]
+# Creating actual dataframe
+df = spark.createDataFrame(df)
+df = df.withColumnRenamed("content", "text")
 
-# Output Key Specific data for each article to respective S3 buckets with specific article ids.
-
+df = clean_pipeline.transform(df)
+df = ner_pipeline.transform(df)
+finsen_annot = finsen_pipeline.transform(df)

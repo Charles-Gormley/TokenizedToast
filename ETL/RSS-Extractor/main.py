@@ -6,11 +6,12 @@ from multiprocessing import Pool
 import os
 import json
 import argparse
+from datetime import date
+
 
 from article_extraction import process_feed
 
 import argparse
-
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some arguments.")
 
@@ -18,6 +19,9 @@ parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("--article_num", type=int, default=False,
                     help="Number of the article. Default is False.")
 
+m = date.month
+d = date.day
+y = date.year
 
 
 # Set up logging
@@ -103,6 +107,7 @@ logging.info("Running pandas content transform")
 os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-Transform/main.py")
 
 logging.info("Saving pandas dataframe to s3")
+cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
 save_to_s3("toast-daily-content", "cleaned-data.pkl", "cleaned-data.pkl")
 
 # Section: Shutting off instance
