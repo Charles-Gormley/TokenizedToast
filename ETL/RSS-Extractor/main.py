@@ -122,4 +122,4 @@ save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn_date)
 
 # Section: Shutting off instance
 logging.info("Process Finished Shuting off ec2 instance")
-# stop_ec2_instance("i-0ea95298232d8ed99")
+stop_ec2_instance("i-0ea95298232d8ed99")
