@@ -8,7 +8,7 @@ y = now.year
 cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
 content_json_fn = f'content-json-{y}-{m}-{d}.json'
 
-content_json_path = f'/home/ec2-user/{content_json_fn}'
+content_json_path = "/home/ec2-user/" + content_json_fn
 cleaner = Cleaner(content_json_path)
 df = cleaner.clean_data()
 
