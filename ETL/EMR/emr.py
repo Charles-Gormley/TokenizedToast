@@ -10,6 +10,11 @@ from datetime import date
 m = date.month
 d = date.day
 y = date.year
+todays_str = f'{y}-{m}-{d}'
+cleaned_data_fn = f'cleaned-data-{todays_str}'
+
+# File Paths
+s3_annotation_url = f"s3://toast-daily-content/{todays_str}"
 
 
 import argparse
@@ -36,7 +41,7 @@ finsen_pipeline = PretrainedPipeline("classifierdl_bertwiki_finance_sentiment_pi
 
 # Ingest the Data From S3
 if not testing:
-    df = spark.read.csv(f"s3://toast-daily-content/cleaned-data-{y}-{m}-{d}.pkl")
+    df = spark.read.csv(f"s3://toast-daily-content/{cleaned_data_fn}")
 
 # Test Dataframe
 else:
@@ -56,4 +61,11 @@ df = df.withColumnRenamed("content", "text")
 
 df = clean_pipeline.transform(df)
 df = ner_pipeline.transform(df)
-finsen_annot = finsen_pipeline.transform(df)
+annotations = finsen_pipeline.transform(df)
+
+annotations.write.parquet(s3_annotation_url)
+
+
+# TODO: Output analytics dataframes to S3.
+# TODO: Add more dates to filenames {cleaned-data.pkl, annotations.parquet, content.json}
+# TODO: I guess BERT and the analytics workload can work asynchrounously

@@ -2,13 +2,18 @@ import pandas as pd
 import numpy as np
 import torch
 import logging
+from datetime import date 
 
 class ProcessContent:
         def __init__(self):
             pass
 
         def load_df(self):
-            self.df = pd.read_pickle("/home/ec2-user/cleaned-data.pkl")
+            m = date.month
+            d = date.day
+            y = date.year
+            cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
+            self.df = pd.read_pickle("/home/ec2-user/"+cleaned_data_fn)
             self.df.drop_duplicates(subset="content", inplace=True)
             self.df.dropna(how="all", inplace=True)
 

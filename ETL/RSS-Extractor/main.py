@@ -22,6 +22,7 @@ parser.add_argument("--article_num", type=int, default=False,
 m = date.month
 d = date.day
 y = date.year
+cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
 
 
 # Set up logging
@@ -107,8 +108,7 @@ logging.info("Running pandas content transform")
 os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-Transform/main.py")
 
 logging.info("Saving pandas dataframe to s3")
-cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
-save_to_s3("toast-daily-content", "cleaned-data.pkl", "cleaned-data.pkl")
+save_to_s3("toast-daily-content", cleaned_data_fn, cleaned_data_fn)
 
 # Section: Shutting off instance
 logging.info("Process Finished Shuting off ec2 instance")

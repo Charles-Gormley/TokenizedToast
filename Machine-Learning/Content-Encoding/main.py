@@ -3,6 +3,12 @@ import os
 from encoder import encode_dataframe_column, load_df
 import logging
 
+from datetime import date
+m = date.month
+d = date.day
+y = date.year
+cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
+
 def start_ec2_instance(instance_id):
     os.system(f'aws ec2 start-instances --instance-ids {instance_id}')
 
@@ -29,15 +35,13 @@ def download_from_s3(bucket, key, destination):
 
 # Example usage
 bucket_name = 'toast-daily-content'
-file_key = 'cleaned-data.pkl'
-destination_path = 'cleaned-data.pkl'
 encoded_df_file = "encoded_df.feather"
 embeddings_file = 'embeddings.pth'
 
-download_from_s3(bucket_name, file_key, destination_path)
+download_from_s3(bucket_name, cleaned_data_fn, cleaned_data_fn)
 
 logging.info("Loading dataframe from pickle file")
-df = load_df('cleaned-data.pkl')
+df = load_df(cleaned_data_fn)
 
 logging.info("Length of DataFrame Indices: %d", len(df["index"]))
 
