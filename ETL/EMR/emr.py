@@ -14,7 +14,7 @@ todays_str = f'{y}-{m}-{d}'
 cleaned_data_fn = f'cleaned-data-{todays_str}'
 
 # File Paths
-s3_annotation_url = f"s3://toast-daily-content/{todays_str}"
+s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
 
 
 import argparse
@@ -49,7 +49,7 @@ else:
         'index': [1, 2],
         'link': ['http://example.com/1', 'http://example.com/2'],
         'title': ['Title1', 'Title2'],
-        'content': [a, b],
+        'content': ['''Test 1 2 3 ''', '''Testing 1 2 3'''],
         'date': ['2023-01-01', '2023-01-02']
     }
 

@@ -44,7 +44,7 @@ def stop_ec2_instance(instance_id):
 
 logging.info("Main function completed")
 
-os.chdir("/home/ec2-user/TokeizedToast/ETL/RSS-Extractor")
+os.chdir("/home/ec2-user/TokenizedToast/ETL/RSS-Extractor")
 
 # Parse the provided arguments
 args = parser.parse_args()
@@ -57,6 +57,7 @@ with open('rss-feeds.json', 'r') as f:
     FEEDS = json.load(f)
 
 if set_article_num:
+    logging.info("Article Number Set! This is a test.")
     FEEDS = FEEDS[:set_article_num] # This is for testing purposes 
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
@@ -109,6 +110,8 @@ os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-T
 
 logging.info("Saving pandas dataframe to s3")
 save_to_s3("toast-daily-content", cleaned_data_fn, cleaned_data_fn)
+
+# TODO: Trigger EMR Job.
 
 # Section: Shutting off instance
 logging.info("Process Finished Shuting off ec2 instance")
