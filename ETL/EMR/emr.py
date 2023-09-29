@@ -1,25 +1,30 @@
 import logging
-from pyspark.ml import Pipeline
-import pandas as pd
-import torch
+import argparse
 from datetime import datetime
+
+
+from pyspark.sql import SparkSession
 import sparknlp
+import joblib
 from sparknlp.pretrained import PretrainedPipeline
 from sparknlp.base import *
 from sparknlp.annotator import *
-import argparse
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') # Setting Log Levels
 
-# Setup logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-logging.info("Script started.")
-
-# Print versions
-logging.info(f"Spark NLP version: {sparknlp.version()}")
+################### SETUP #########################
+logging.info("Starting PySpark")
+spark = SparkSession.builder \
+    .appName("Spark NLP") \
+    .master("yarn") \
+    .config("spark.driver.memory", "16G") \
+    .config("spark.driver.maxResultSize", "16G") \
+    .config("spark.jars.packages", "com.johnsnowlabs.nlp:spark-nlp_2.12:3.3.1").config("spark.kryoserializer.buffer.max", "2000M") \
+    .getOrCreate()
 spark = sparknlp.start()
-logging.info(f"Apache Spark version: {spark.version}")
 
-# Generate date string for today
+
+# Declaring File Names
 now = datetime.now()
 m = str(now.month)
 d = str(now.day)
@@ -28,9 +33,8 @@ todays_str = f'{y}-{m}-{d}'
 
 cleaned_data_fn_date = f'cleaned-data{todays_str}.pkl'
 cleaned_data_fn = 'cleaned-data.pkl'
-
-# File Paths
 s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
+
 
 # Initialize the argument parser
 logging.info("Parsing arguments...")
@@ -39,32 +43,36 @@ parser.add_argument("--testing", type=bool, default=False, help="Number of the a
 args = parser.parse_args()
 testing = args.testing
 
+
 # Load Pretrained Pipelines
-logging.info("Loading Pretrained Pipelines...")
-clean_pipeline = PretrainedPipeline('clean_stop', lang='en')
-ner_pipeline = PretrainedPipeline('onto_recognize_entities_bert_large', lang='en')
-finsen_pipeline = PretrainedPipeline("classifierdl_bertwiki_finance_sentiment_pipeline", "en")
+def load_model(s3_location):
+    model_data = spark.read.text(s3_location)
+    return joblib.load('/local/path/to/download/model')
 
-# Ingest Data from S3 or create a test dataframe
-if not testing:
-    logging.info("Ingesting Data from S3...")
-    df = spark.read.csv(f"s3://toast-daily-content/{cleaned_data_fn}")
-else:
-    logging.info("Creating a test dataframe...")
-    data = {'index': [1, 2], 'link': ['http://example.com/1', 'http://example.com/2'], 'title': ['Title1', 'Title2'],
-            'content': ['''Test 1 2 3 ''', '''Testing 1 2 3'''], 'date': ['2023-01-01', '2023-01-02']}
-    df = pd.DataFrame(data)
+clean_pipeline =load_model()
+ner_pipeline = load_model()
+finsen_pipeline = load_model()
 
-# Transformations
-logging.info("Creating and transforming dataframes...")
-df = spark.createDataFrame(df)
-df = df.withColumnRenamed("content", "text")
+# # Ingest Data from S3 or create a test dataframe
+# if not testing:
+#     logging.info("Ingesting Data from S3...")
+#     df = spark.read.csv(f"s3://toast-daily-content/{cleaned_data_fn}")
+# else:
+#     logging.info("Creating a test dataframe...")
+#     data = {'index': [1, 2], 'link': ['http://example.com/1', 'http://example.com/2'], 'title': ['Title1', 'Title2'],
+#             'content': ['''Test 1 2 3 ''', '''Testing 1 2 3'''], 'date': ['2023-01-01', '2023-01-02']}
+#     df = pd.DataFrame(data)
 
-df = clean_pipeline.transform(df)
-df = ner_pipeline.transform(df)
-annotations = finsen_pipeline.transform(df)
+# # Transformations
+# logging.info("Creating and transforming dataframes...")
+# df = spark.createDataFrame(df)
+# df = df.withColumnRenamed("content", "text")
 
-logging.info("Writing annotations to parquet...")
-annotations.write.parquet(s3_annotation_url)
+# df = clean_pipeline.transform(df)
+# df = ner_pipeline.transform(df)
+# annotations = finsen_pipeline.transform(df)
 
-logging.info("Script completed.")
+# logging.info("Writing annotations to parquet...")
+# annotations.write.parquet(s3_annotation_url)
+
+# logging.info("Script completed.")
