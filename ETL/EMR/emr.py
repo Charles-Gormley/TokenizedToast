@@ -6,13 +6,16 @@ from pyspark.ml import Pipeline
 
 import pandas as pd
 import torch
+
 from datetime import datetime
 now = datetime.now()
 m = str(now.month)
 d = str(now.day)
 y = str(now.year)
 todays_str = f'{y}-{m}-{d}'
-cleaned_data_fn = f'cleaned-data-{todays_str}'
+
+cleaned_data_fn_date = f'cleaned-data{todays_str}.pkl' # Doing this for EBS Volume Reasonings
+cleaned_data_fn = 'cleaned-data.pkl'
 
 # File Paths
 s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"

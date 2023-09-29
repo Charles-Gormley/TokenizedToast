@@ -22,8 +22,13 @@ now = datetime.now()
 m = str(now.month)
 d = str(now.day)
 y = str(now.year)
-cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
-content_json_fn = f'content-json-{y}-{m}-{d}.json'
+todays_str = f'{y}-{m}-{d}'
+
+cleaned_data_fn_date = f'cleaned-data{todays_str}.pkl' # Doing this for EBS Volume Reasonings
+content_json_fn_date = f'content-{y}-{m}-{d}.json'
+
+cleaned_data_fn = 'cleaned-data.pkl'
+content_json_fn = 'content.json'
 
 
 # Set up logging
@@ -104,14 +109,14 @@ with open(content_file_path, 'w') as json_file:
     json_file.write(json_data)
 
 logging.info("Saving content.json to s3")
-save_to_s3("toast-daily-content", content_file_path, content_json_fn)
+save_to_s3("toast-daily-content", content_file_path, content_json_fn_date)
 
 # Section: Pandas Dataframe
 logging.info("Running pandas content transform")
 os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-Transform/main.py")
 
 logging.info("Saving pandas dataframe to s3")
-# save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn)
+save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn_date)
 
 # TODO: Trigger EMR Job.
 
