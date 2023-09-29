@@ -100,7 +100,7 @@ else:
 
 logging.info("Writing json File")
 with open(file_path, 'w') as json_file:
-    json_file.write("/home/ec2-user/" + json_data)
+    json_file.write("/home/ec2-user/" + content_json_fn)
 
 logging.info("Saving content.json to s3")
 save_to_s3("toast-daily-content", "/home/ec2-user/" + content_json_fn, "/home/ec2-user/" + content_json_fn)
