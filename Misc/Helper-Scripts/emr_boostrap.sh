@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo pip install spark-nlp pyspark pandas numpy
+sudo pip3 install spark-nlp pyspark pandas numpy

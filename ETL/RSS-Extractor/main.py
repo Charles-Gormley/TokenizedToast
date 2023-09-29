@@ -18,11 +18,11 @@ parser = argparse.ArgumentParser(description="Process some arguments.")
 # Add the optional argument. If it's not provided, its value will be set to False.
 parser.add_argument("--article_num", type=int, default=False,
                     help="Number of the article. Default is False.")
-
 m = date.month
 d = date.day
 y = date.year
-cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
+cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
+content_json_fn = f'content-json-{y}-{m}-{d}.json'
 
 
 # Set up logging
@@ -88,7 +88,7 @@ logging.info("Actual Feeds: %s", str(pulled_feeds))
 # Section Json Handling
 logging.info("Dumping Json")
 json_data = json.dumps(content_archive)
-file_path = 'content.json'
+file_path = content_json_fn
 
 logging.info("Deleting old content.json file if it exists")
 if os.path.exists(file_path):
@@ -102,7 +102,7 @@ with open(file_path, 'w') as json_file:
     json_file.write(json_data)
 
 logging.info("Saving content.json to s3")
-save_to_s3("toast-daily-content", "content.json", "content.json")
+save_to_s3("toast-daily-content", content_json_fn, content_json_fn)
 
 # Section: Pandas Dataframe
 logging.info("Running pandas content transform")
