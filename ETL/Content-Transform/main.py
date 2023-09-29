@@ -2,9 +2,9 @@ from cleaning import Cleaner
 import pickle
 from datetime import datetime
 now = datetime.now()
-m = now.month
-d = now.day
-y = now.year
+m = str(now.month)
+d = str(now.day)
+y = str(now.year)
 cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
 content_json_fn = f'content-json-{y}-{m}-{d}.json'
 

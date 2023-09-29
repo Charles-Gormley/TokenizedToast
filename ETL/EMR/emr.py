@@ -8,9 +8,9 @@ import pandas as pd
 import torch
 from datetime import datetime
 now = datetime.now()
-m = now.month
-d = now.day
-y = now.year
+m = str(now.month)
+d = str(now.day)
+y = str(now.year)
 todays_str = f'{y}-{m}-{d}'
 cleaned_data_fn = f'cleaned-data-{todays_str}'
 
