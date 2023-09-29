@@ -89,28 +89,29 @@ logging.info("Actual Feeds: %s", str(pulled_feeds))
 # Section Json Handling
 logging.info("Dumping Json")
 json_data = json.dumps(content_archive)
-file_path = content_json_fn
+content_file_path = "/home/ec2-user/" + content_json_fn
+df_file_path = "/home/ec2-user/" + cleaned_data_fn
 
 logging.info("Deleting old content.json file if it exists")
-if os.path.exists(file_path):
-    os.remove(file_path)
-    print(f"{file_path} deleted successfully.")
+if os.path.exists(content_file_path):
+    os.remove(content_file_path)
+    print(f"{content_file_path} deleted successfully.")
 else:
-    print(f"{file_path} does not exist.")
+    print(f"{content_file_path} does not exist.")
 
 logging.info("Writing json File")
-with open(file_path, 'w') as json_file:
-    json_file.write("/home/ec2-user/" + content_json_fn)
+with open(content_file_path, 'w') as json_file:
+    json_file.write(json_data)
 
 logging.info("Saving content.json to s3")
-save_to_s3("toast-daily-content", "/home/ec2-user/" + content_json_fn, "/home/ec2-user/" + content_json_fn)
+save_to_s3("toast-daily-content", content_file_path, content_json_fn)
 
 # Section: Pandas Dataframe
 logging.info("Running pandas content transform")
 os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-Transform/main.py")
 
 logging.info("Saving pandas dataframe to s3")
-# save_to_s3("toast-daily-content", cleaned_data_fn, cleaned_data_fn)
+# save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn)
 
 # TODO: Trigger EMR Job.
 
