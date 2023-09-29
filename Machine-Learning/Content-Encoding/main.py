@@ -3,11 +3,15 @@ import os
 from encoder import encode_dataframe_column, load_df
 import logging
 
+logging.basicConfig(level=logging.INFO,
+                    format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+
 from datetime import date
 m = date.month
 d = date.day
 y = date.year
-cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}'
+cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
 
 def start_ec2_instance(instance_id):
     os.system(f'aws ec2 start-instances --instance-ids {instance_id}')
@@ -18,20 +22,17 @@ def stop_ec2_instance(instance_id):
 def save_to_s3(bucket_name, file_path, s3_key):
     os.system(f'aws s3 cp {file_path} s3://{bucket_name}/{s3_key}')
 
-logging.basicConfig(level=logging.INFO,
-                    format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
-
-logging.info("Changing Directoy command")
-os.chdir("/home/ec2-user")
-cwd = os.getcwd()
-logging.info(f"CWD: {cwd}")
-
 def download_from_s3(bucket, key, destination):
     logging.info(f"Starting download from s3://{bucket}/{key} to {destination}")
     command = f'aws s3 cp s3://{bucket}/{key} {destination}'
     os.system(command)
     logging.info(f"Finished download from s3://{bucket}/{key} to {destination}")
+
+
+logging.info("Changing Directoy command")
+os.chdir("/home/ec2-user")
+cwd = os.getcwd()
+logging.info(f"Checking CWD: {cwd}")
 
 # Example usage
 bucket_name = 'toast-daily-content'

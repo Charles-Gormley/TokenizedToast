@@ -9,6 +9,7 @@ import joblib
 from sparknlp.pretrained import PretrainedPipeline
 from sparknlp.base import *
 from sparknlp.annotator import *
+import pandas as pd
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') # Setting Log Levels
 
 
@@ -46,8 +47,7 @@ testing = args.testing
 
 # Load Pretrained Pipelines
 def load_model(s3_location):
-    model_data = spark.read.text(s3_location)
-    return joblib.load('/local/path/to/download/model')
+    return PretrainedPipeline.from_disk(s3_location)
 
 clean_pipeline =load_model()
 ner_pipeline = load_model()
