@@ -19,9 +19,9 @@ parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("--article_num", type=int, default=False,
                     help="Number of the article. Default is False.")
 now = datetime.now()
-m = now.month
-d = now.day
-y = now.year
+m = str(now.month)
+d = str(now.day)
+y = str(now.year)
 cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
 content_json_fn = f'content-json-{y}-{m}-{d}.json'
 
