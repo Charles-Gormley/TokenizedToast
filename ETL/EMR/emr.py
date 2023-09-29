@@ -12,6 +12,9 @@ from sparknlp.annotator import *
 import pandas as pd
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') # Setting Log Levels
 
+# Testing Levels
+testing = False
+
 
 ################### SETUP #########################
 logging.info("Starting PySpark")
@@ -37,21 +40,13 @@ cleaned_data_fn = 'cleaned-data.pkl'
 s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
 
 
-# Initialize the argument parser
-logging.info("Parsing arguments...")
-parser = argparse.ArgumentParser(description="Process some arguments.")
-parser.add_argument("--testing", type=bool, default=False, help="Number of the article. Default is False.")
-args = parser.parse_args()
-testing = args.testing
-
-
 # Load Pretrained Pipelines
 def load_model(s3_location):
     return PretrainedPipeline.from_disk(s3_location)
 
 clean_pipeline =load_model()
 ner_pipeline = load_model()
-finsen_pipeline = load_model()
+finsen_pipeline = load_model('s3://spark-nlp-models/classifierdl_bertwiki_finance_sentiment_pipeline_en_4.3.0_3.0_1673543221872/')
 
 # # Ingest Data from S3 or create a test dataframe
 # if not testing:
