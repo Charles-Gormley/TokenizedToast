@@ -6,10 +6,11 @@ from pyspark.ml import Pipeline
 
 import pandas as pd
 import torch
-from datetime import date
-m = date.month
-d = date.day
-y = date.year
+from datetime import datetime
+now = datetime.now()
+m = now.month
+d = now.day
+y = now.year
 todays_str = f'{y}-{m}-{d}'
 cleaned_data_fn = f'cleaned-data-{todays_str}'
 

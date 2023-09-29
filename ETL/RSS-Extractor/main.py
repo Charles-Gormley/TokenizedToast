@@ -6,7 +6,7 @@ from multiprocessing import Pool
 import os
 import json
 import argparse
-from datetime import date
+from datetime import datetime
 
 
 from article_extraction import process_feed
@@ -18,9 +18,10 @@ parser = argparse.ArgumentParser(description="Process some arguments.")
 # Add the optional argument. If it's not provided, its value will be set to False.
 parser.add_argument("--article_num", type=int, default=False,
                     help="Number of the article. Default is False.")
-m = date.month
-d = date.day
-y = date.year
+now = datetime.now()
+m = now.month
+d = now.day
+y = now.year
 cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
 content_json_fn = f'content-json-{y}-{m}-{d}.json'
 
