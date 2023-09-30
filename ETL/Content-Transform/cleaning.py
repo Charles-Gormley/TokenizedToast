@@ -26,7 +26,7 @@ class Cleaner:
         self.df[date_column] = pd.to_datetime(self.df[date_column])
 
         # get date three days ago
-        three_days_ago = datetime.now() - timedelta(days=3)
+        three_days_ago = datetime.now() - timedelta(days=2)
 
         # select only rows where date_column is later than three days ago
         self.df = self.df.loc[self.df[date_column] > three_days_ago]
