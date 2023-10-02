@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 set -x -e
 
 echo -e 'export PYSPARK_PYTHON=/usr/bin/python3
