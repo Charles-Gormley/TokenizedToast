@@ -3,4 +3,5 @@
 *.pkl
 *.pyc
 *.json
-api_key.txt
+*.pem
+*.env

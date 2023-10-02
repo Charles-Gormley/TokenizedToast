@@ -5,8 +5,8 @@ aws emr create-cluster \
 --instance-type m4.4xlarge \
 --instance-count 3 \
 --use-default-roles \
---log-uri "s3://<S3_BUCKET>/" \
---bootstrap-actions Path=s3://<S3_BUCKET>/emr-bootstrap.sh,Name=custome \
---configurations "https://<public_access>/sparknlp-config.json" \
+--log-uri "s3://spark-nlp-logs/" \
+--bootstrap-actions Path=s3://toast-scripts/emr-bootstrap.sh \
+--configurations "https://spark-nlp-configs/sparknlp-config.json" \
 --ec2-attributes KeyName=<your_ssh_key>,EmrManagedMasterSecurityGroup=<security_group_with_ssh>,EmrManagedSlaveSecurityGroup=<security_group_with_ssh> \
---profile <aws_profile_credentials>
+--profile default
