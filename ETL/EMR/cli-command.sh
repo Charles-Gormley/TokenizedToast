@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CONFIG_JSON=$(curl -s "https://spark-nlp-configs.s3.amazonaws.com/software-config.json")
+STEPS='[{"Name":"Main","Type":"Spark","ActionOnFailure":"CONTINUE","Args":["spark-submit","--deploy-mode","client","s3://toast-scripts/emr.py"]}]'
+
 aws emr create-cluster \
 --name "Spark NLP 5.1.2" \
 --release-label emr-6.2.0 \
@@ -8,7 +11,8 @@ aws emr create-cluster \
 --instance-count 3 \
 --use-default-roles \
 --log-uri "s3://spark-nlp-logs/" \
---bootstrap-actions Path=s3://toast-scripts/emr-bootstrap.sh \
---configurations "https://spark-nlp-configs.s3.amazonaws.com/software-config.json" \
---ec2-attributes KeyName=key-0403d3df15144f1bb,EmrManagedMasterSecurityGroup=sg-0dbdf53296082ef59,EmrManagedSlaveSecurityGroup=sg-009393133ee9572da \
+--bootstrap-actions Path=s3://toast-scripts/emr_boostrap.sh \
+--configurations "$CONFIG_JSON" \
+--ec2-attributes KeyName=Spark-NLP-Key-Pair,EmrManagedMasterSecurityGroup=sg-0dbdf53296082ef59,EmrManagedSlaveSecurityGroup=sg-009393133ee9572da \
+--steps "$STEPS" \
 --profile default
