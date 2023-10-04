@@ -5,9 +5,8 @@ STEPS='[{"Name":"emr","ActionOnFailure":"CONTINUE","Jar":"command-runner.jar","P
 
 aws emr create-cluster \
 --name "Spark NLP 5.1.2" \
---release-label emr-6.2.0 \
+--release-label emr-6.10.0 \
 --applications Name=Hadoop Name=Spark Name=Hive \
---service-role "arn:aws:iam::966265353179:role/EMR_DefaultRole" \
 --managed-scaling-policy '{"ComputeLimits":{"UnitType":"Instances","MinimumCapacityUnits":2,"MaximumCapacityUnits":20,"MaximumOnDemandCapacityUnits":20,"MaximumCoreCapacityUnits":20}}' \
 --instance-type m4.4xlarge \
 --instance-count 3 \
@@ -16,9 +15,10 @@ aws emr create-cluster \
 --configurations "$CONFIG_JSON" \
 --ec2-attributes KeyName=Spark-NLP-Key-Pair,EmrManagedMasterSecurityGroup=sg-0dbdf53296082ef59,EmrManagedSlaveSecurityGroup=sg-009393133ee9572da,SubnetId=subnet-0085a33ae13b3d5e3 \
 --steps "$STEPS" \
+--use-default-roles \
 --profile default \
- --scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
- --auto-termination-policy '{"IdleTimeout":3600}' \
+--scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
+--auto-termination-policy '{"IdleTimeout":3600}' \
 --region "us-east-1"
 
 
