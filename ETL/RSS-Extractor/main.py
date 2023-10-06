@@ -126,6 +126,6 @@ save_to_s3("toast-daily-content", hdf_file_path, cleaned_data_hdf_fn)
 
 # Section: Shutting off instance
 
-if set_article_num == 5:
+if set_article_num != 5:
     logging.info("Process Finished Shuting off ec2 instance")
     stop_ec2_instance("i-0ea95298232d8ed99")
