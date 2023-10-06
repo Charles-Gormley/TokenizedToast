@@ -70,12 +70,12 @@ d = str(now.day)
 y = str(now.year)
 todays_str = f'{y}-{m}-{d}'
 
-cleaned_data_fn_date = f'cleaned-data{todays_str}.pkl'
-cleaned_data_fn = 'cleaned-data.pkl'
+cleaned_data_fn = 'cleaned-data.hdf'
 s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
 
 
 # Load Pretrained Pipelines
+
 logging.info("Loading Pretrained Pipelines")
 def load_model(s3_location):
     return PretrainedPipeline.from_disk(s3_location)
@@ -93,19 +93,16 @@ while tries < 3:
         logging.info(f"Retrying{str(tries)}")
         tries += 1
         pass
+
+
 # Loading in DataFrame
 logging.info("Loading in s3 Client")
 s3client = boto3.client('s3')
 def load_dataset(bucket:str, key:str, s3client=s3client):
     response = s3client.get_object(Bucket=bucket, Key=key)
     body = response['Body'].read()
-    try:
-        logging.info("Normal Pickle working")
-        test = pickle.loads(body) 
-    except:
-        pass
     logging.info("Pandas Pickle working")
-    data = pd.read_pickle(body)
+    data = pd.read_hdf(body)
     
     df = spark.createDataFrame(data)
     return df

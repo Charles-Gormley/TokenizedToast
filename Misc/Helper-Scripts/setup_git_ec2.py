@@ -2,7 +2,7 @@
 
 import os
 
-os.chdir("..")
+os.chdir("/home/ec2-user/TokenizedToast/")
 print(os.getcwd())
 os.system("git fetch")
 os.system("git pull")

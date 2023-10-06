@@ -20,7 +20,6 @@ df = cleaner.clean_data()
 with open(cleaned_data_path, 'wb') as f:
     pickle.dump(df, f)
 
-
 with open(cleaned_data_hdf_path, 'wb') as f:
     pickle.HIGHEST_PROTOCOL = 4
     df.to_hdf(cleaned_data_hdf_path, 'df')
