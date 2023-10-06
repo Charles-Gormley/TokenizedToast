@@ -99,10 +99,12 @@ while tries < 3:
 logging.info("Loading in s3 Client")
 s3client = boto3.client('s3')
 def load_dataset(bucket:str, key:str, s3client=s3client):
+    logging.info("Loading in file")
     response = s3client.get_object(Bucket=bucket, Key=key)
-    body = response['Body'].read()
-    logging.info("Pandas Pickle working")
-    data = pd.read_csv(body)
+
+    csv_path = "s3://toast-daily-content/cleaned-data.csv"
+    df = spark.read.csv(csv_path, header=True, inferSchema=True)
+
     
     df = spark.createDataFrame(data)
     return df
