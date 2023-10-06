@@ -100,12 +100,13 @@ def load_dataset(bucket:str, key:str, s3client=s3client):
     response = s3client.get_object(Bucket=bucket, Key=key)
     body = response['Body'].read()
     try:
-        test = pickle.loads(body)
         logging.info("Normal Pickle working")
+        test = pickle.loads(body) 
     except:
         pass
-    data = pd.read_pickle(body)
     logging.info("Pandas Pickle working")
+    data = pd.read_pickle(body)
+    
     df = spark.createDataFrame(data)
     return df
 
