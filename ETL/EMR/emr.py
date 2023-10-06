@@ -70,7 +70,7 @@ d = str(now.day)
 y = str(now.year)
 todays_str = f'{y}-{m}-{d}'
 
-cleaned_data_fn = 'cleaned-data.hdf'
+cleaned_data_fn = 'cleaned-data.csv'
 s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
 
 
@@ -102,7 +102,7 @@ def load_dataset(bucket:str, key:str, s3client=s3client):
     response = s3client.get_object(Bucket=bucket, Key=key)
     body = response['Body'].read()
     logging.info("Pandas Pickle working")
-    data = pd.read_hdf(body)
+    data = pd.read_csv(body)
     
     df = spark.createDataFrame(data)
     return df

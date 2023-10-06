@@ -27,7 +27,7 @@ todays_str = f'{y}-{m}-{d}'
 cleaned_data_fn_date = f'cleaned-data{todays_str}.pkl' # Doing this for EBS Volume Reasonings
 content_json_fn_date = f'content-{y}-{m}-{d}.json'
 cleaned_data_fn = 'cleaned-data.pkl'
-cleaned_data_hdf_fn = 'cleaned-data.hdf'
+cleaned_data_csv_fn = 'cleaned-data.csv'
 content_json_fn = 'content.json'
 
 
@@ -96,7 +96,7 @@ logging.info("Dumping Json")
 json_data = json.dumps(content_archive)
 content_file_path = "/home/ec2-user/" + content_json_fn
 df_file_path = "/home/ec2-user/" + cleaned_data_fn
-hdf_file_path = "/home/ec2-user/" + cleaned_data_hdf_fn
+csv_file_path = "/home/ec2-user/" + cleaned_data_csv_fn
 
 logging.info("Deleting old content.json file if it exists")
 if os.path.exists(content_file_path):
@@ -119,8 +119,8 @@ os.system("/usr/local/bin/python3.11 /home/ec2-user/TokenizedToast/ETL/Content-T
 logging.info("Saving pandas dataframe to s3")
 save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn_date)
 
-logging.info("Saving hdf file s3")
-save_to_s3("toast-daily-content", hdf_file_path, cleaned_data_hdf_fn)
+logging.info("Saving csv file s3")
+save_to_s3("toast-daily-content", csv_file_path, cleaned_data_csv_fn)
 
 # TODO: Trigger EMR Job.
 
