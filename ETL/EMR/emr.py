@@ -3,8 +3,9 @@ import argparse
 import os
 from datetime import datetime
 import pickle
+from io import BytesIO
 
-
+import boto3
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
 import sparknlp
@@ -61,6 +62,7 @@ print("Spark NLP version: {}".format(sparknlp.version()))
 print("Apache Spark version: {}".format(spark.version))
 
 # Declaring File Names
+
 logging.info("Setting Data time File Names")
 now = datetime.now()
 m = str(now.month)
@@ -74,40 +76,59 @@ s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
 
 
 # Load Pretrained Pipelines
+logging.info("Loading Pretrained Pipelines")
 def load_model(s3_location):
     return PretrainedPipeline.from_disk(s3_location)
 
-# clean_pipeline = load_model('s3://spark-nlp-models/clean_stop_en_3.0.0_3.0_1616544492033/')
-# ner_pipeline = load_model()
-finsen_pipeline = load_model('s3://spark-nlp-models/classifierdl_bertwiki_finance_sentiment_pipeline_en_4.3.0_3.0_1673543221872/')
+clean_pipeline = PretrainedPipeline('clean_stop', lang = 'en')
+finsen_pipeline = load_model('s3://spark-nlp-models/classifierdl_bertwiki_finance_sentiment_pipeline_en_4.3.0_3.0_1673543221872/') # Financial Sentiment Analysis
 
-# # Loading in DataFrame
-# def load_dataset(s3_path):
-#     local_path = "/tmp/df.pkl"
-#     os.system(f"aws s3 cp {s3_path} {local_path}")
-#     df = spark.read.csv(local_path, header=True, inferSchema=True)
-#     return df
+# Retry Logic
+tries = 0
+while tries < 3:
+    try:
+        ner_pipeline = PretrainedPipeline('onto_recognize_entities_bert_medium', lang = 'en') # Name Entity Recognition
+        tries = 3
+    except:
+        logging.info(f"Retrying{str(tries)}")
+        tries += 1
+        pass
+# Loading in DataFrame
+logging.info("Loading in s3 Client")
+s3client = boto3.client('s3')
+def load_dataset(bucket:str, key:str, s3client=s3client):
+    response = s3client.get_object(Bucket=bucket, Key=key)
+    body = response['Body'].read()
+    try:
+        test = pickle.loads(body)
+        logging.info("Normal Pickle working")
+    except:
+        pass
+    data = pd.read_pickle(body)
+    logging.info("Pandas Pickle working")
+    df = spark.createDataFrame(data)
+    return df
 
-# # # Ingest Data from S3 or create a test dataframe
-# if not testing:
-#     logging.info("Ingesting Data from S3...")
-#     df = load_dataset(f"s3://toast-daily-content/{cleaned_data_fn}")
-# else:
-#     logging.info("Creating a test dataframe...")
-#     data = {'index': [1, 2], 'link': ['http://example.com/1', 'http://example.com/2'], 'title': ['Title1', 'Title2'],
-#             'content': ['''Test 1 2 3 ''', '''Testing 1 2 3'''], 'date': ['2023-01-01', '2023-01-02']}
-#     df = pd.DataFrame(data)
+# # Ingest Data from S3 or create a test dataframe
+if not testing:
+    logging.info("Production Environment")
+    logging.info("Ingesting Data from S3...")
+    df = load_dataset("toast-daily-content", cleaned_data_fn)
+else:
+    logging.info("Creating a test dataframe...")
+    data = {'index': [1, 2], 'link': ['http://example.com/1', 'http://example.com/2'], 'title': ['Title1', 'Title2'],
+            'content': ['''Test 1 2 3 ''', '''Testing 1 2 3'''], 'date': ['2023-01-01', '2023-01-02']}
+    df = pd.DataFrame(data)
 
-# # Transformations
-# logging.info("Creating and transforming dataframes...")
-# df = spark.createDataFrame(df)
-# df = df.withColumnRenamed("content", "text")
+# Transformations
+logging.info("Creating and transforming dataframes...")
+df = df.withColumnRenamed("content", "text")
 
-# # df = clean_pipeline.transform(df)
-# # df = ner_pipeline.transform(df)
-# annotations = finsen_pipeline.transform(df)
+df = clean_pipeline.transform(df)
+df = ner_pipeline.transform(df)
+annotations = finsen_pipeline.transform(df)
 
-# logging.info("Writing annotations to parquet...")
-# annotations.write.parquet(s3_annotation_url)
+logging.info("Writing annotations to parquet...")
+annotations.write.parquet(s3_annotation_url)
 
-# logging.info("Script completed.")
+logging.info("Script completed.")
