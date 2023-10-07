@@ -122,7 +122,7 @@ save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn_date)
 logging.info("Saving csv file s3")
 save_to_s3("toast-daily-content", csv_file_path, cleaned_data_csv_fn)
 
-# TODO: Trigger EMR Job.
+logging.info('Trigger EMR Job')
 os.system("sudo chmod 777 /home/ec2-user/TokenizedToast/ETL/EMR/cli-command.sh")
 os.chdir('/home/ec2-user/TokenizedToast/ETL/EMR/')
 os.system('./cli-command.sh')

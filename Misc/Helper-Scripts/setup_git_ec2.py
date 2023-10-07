@@ -4,6 +4,7 @@ import os
 
 os.chdir("/home/ec2-user/TokenizedToast/")
 print(os.getcwd())
+os.system('git reset --hard')
 os.system("git fetch")
 os.system("git pull")
 
