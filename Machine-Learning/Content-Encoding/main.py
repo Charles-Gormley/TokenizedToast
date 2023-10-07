@@ -13,7 +13,7 @@ m = str(now.month)
 d = str(now.day)
 y = str(now.year)
 todays_str = f'{y}-{m}-{d}'
-cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
+cleaned_data_fn = f'cleaned-data{y}-{m}-{d}.pkl'
 
 def start_ec2_instance(instance_id):
     os.system(f'aws ec2 start-instances --instance-ids {instance_id}')
