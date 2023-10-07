@@ -7,10 +7,12 @@ logging.basicConfig(level=logging.INFO,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-from datetime import date
-m = date.month
-d = date.day
-y = date.year
+from datetime import datetime
+now = datetime.now()
+m = str(now.month)
+d = str(now.day)
+y = str(now.year)
+todays_str = f'{y}-{m}-{d}'
 cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
 
 def start_ec2_instance(instance_id):
