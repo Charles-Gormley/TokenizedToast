@@ -71,24 +71,25 @@ y = str(now.year)
 todays_str = f'{y}-{m}-{d}'
 
 cleaned_data_fn = 'cleaned-data.csv'
-s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}"
+output_file = 'annotations.json'
+s3_annotation_url = f"s3://toast-daily-analytics/{todays_str}/{output_file}"
 
 
 # Load Pretrained Pipelines
 
 logging.info("Loading Pretrained Pipelines")
 def load_model(s3_location):
+    logging.info("Loading Model From S3 ")
     return PretrainedPipeline.from_disk(s3_location)
 
-clean_pipeline = PretrainedPipeline('clean_stop', lang = 'en')
 finsen_pipeline = load_model('s3://spark-nlp-models/classifierdl_bertwiki_finance_sentiment_pipeline_en_4.3.0_3.0_1673543221872/') # Financial Sentiment Analysis
 
 # Retry Logic
-tries = 0
-while tries < 3:
+max_retries, tries = 5, 0 
+while tries < max_retries:
     try:
         ner_pipeline = PretrainedPipeline('onto_recognize_entities_bert_medium', lang = 'en') # Name Entity Recognition
-        tries = 3
+        tries = max_retries
     except:
         logging.info(f"Retrying{str(tries)}")
         tries += 1
@@ -100,13 +101,9 @@ logging.info("Loading in s3 Client")
 s3client = boto3.client('s3')
 def load_dataset(bucket:str, key:str, s3client=s3client):
     logging.info("Loading in file")
-    response = s3client.get_object(Bucket=bucket, Key=key)
-
-    csv_path = "s3://toast-daily-content/cleaned-data.csv"
+    # response = s3client.get_object(Bucket=bucket, Key=key)
+    csv_path = f"s3://{bucket}/{key}"
     df = spark.read.csv(csv_path, header=True, inferSchema=True)
-
-    
-    df = spark.createDataFrame(data)
     return df
 
 # # Ingest Data from S3 or create a test dataframe
@@ -121,14 +118,35 @@ else:
     df = pd.DataFrame(data)
 
 # Transformations
-logging.info("Creating and transforming dataframes...")
+logging.info("Column Rename...")
 df = df.withColumnRenamed("content", "text")
 
-df = clean_pipeline.transform(df)
+# logging.info("Clean Pipeline Transformation")
+# df = clean_pipeline.transform(df)
+
+logging.info("Name Entity Recognition Pipeline")
+df = finsen_pipeline.transform(df)
 df = ner_pipeline.transform(df)
-annotations = finsen_pipeline.transform(df)
+
+logging.info("Outputting Df columns")
+print(df.columns)
+
+logging.info("Changing column names")
+df = df.drop(*'date','checked', 'sentence_embeddings', 'ner', 'document', 'sentence', 'text', 'token', 'embeddings', "_c0")
+print(df.columns)
 
 logging.info("Writing annotations to parquet...")
-annotations.write.parquet(s3_annotation_url)
+json_str = df.toJSON().collect()
+# Join the list into a single string
+json_str = str(json_str)
+
+# Now you can encode the string
+json_str = json_str.encode('utf-8')
+s3client.put_object(Bucket='toast-daily-analytics', 
+                             Key=f'{todays_str}/{output_file}', 
+                             Body=json_str,
+                             ContentType='application/json', 
+                             ContentEncoding='utf-8'
+                             )
 
 logging.info("Script completed.")
