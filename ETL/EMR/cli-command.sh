@@ -18,5 +18,5 @@ aws emr create-cluster \
 --use-default-roles \
 --profile default \
 --scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
---auto-termination-policy '{"IdleTimeout":3600}' \
+--auto-terminate \
 --region "us-east-1"
