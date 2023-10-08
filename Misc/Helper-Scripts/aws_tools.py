@@ -30,3 +30,9 @@ def zip_files(src_files:str, output_path:str):
     """
     command = f'zip {output_path} {src_files}'
     os.system(command)
+
+def copy_files_lambda(file_path:str, destination_parent:str):
+    lambda_file = 'lambda_function.py'
+
+    os.system(f'mkdir {destination_parent}')
+    os.system(f'cp {file_path} {destination_parent}/{lambda_file}')
