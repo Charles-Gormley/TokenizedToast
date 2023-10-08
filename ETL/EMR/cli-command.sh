@@ -9,7 +9,7 @@ aws emr create-cluster \
 --applications Name=Hadoop Name=Spark Name=Hive \
 --managed-scaling-policy '{"ComputeLimits":{"UnitType":"Instances","MinimumCapacityUnits":2,"MaximumCapacityUnits":20,"MaximumOnDemandCapacityUnits":20,"MaximumCoreCapacityUnits":20}}' \
 --instance-type m4.2xlarge \
---instance-count 2 \
+--instance-count 3 \
 --log-uri "s3://spark-nlp-logs/" \
 --bootstrap-actions Path=s3://toast-scripts/emr_boostrap.sh \
 --configurations "$CONFIG_JSON" \

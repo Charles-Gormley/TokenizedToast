@@ -21,3 +21,12 @@ def download_from_s3(bucket, key, destination):
 def link_lambda(lambda_function:str, bucket:str, key:str):
     os.system(f'aws lambda update-function-code --function-name {lambda_function} --s3-bucket {bucket} --s3-key {key}')
 
+def zip_files(src_files:str, output_path:str):
+    """Zips the provided source files into the specified output path.
+
+    Parameters:
+    - src_files (str): Space-separated string of file paths to zip.
+    - output_path (str): Destination zip file path.
+    """
+    command = f'zip {output_path} {src_files}'
+    os.system(command)
