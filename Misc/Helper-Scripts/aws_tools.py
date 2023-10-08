@@ -1,8 +1,6 @@
 import os
 import logging
 
-
-
 def start_ec2_instance(instance_id):
     os.system(f'aws ec2 start-instances --instance-ids {instance_id}')
 
@@ -33,8 +31,22 @@ def zip_files(src_files:str, output_path:str):
 
 def copy_files_lambda(file_path:str, destination_parent:str):
     lambda_file = 'lambda_function.py'
-
-    
-
     os.system(f'mkdir {destination_parent}')
     os.system(f'cp {file_path} {destination_parent}/{lambda_file}')
+
+
+def upload_to_lambda(original_fp:str, target_lambda:str, bucket:str):
+    lambda_file = 'lambda_function.py'
+    output_zip = target_lambda+'.zip'
+
+    # Copying python file from original folder to lambda_function.py
+    os.system(f'cp {original_fp} {lambda_file}')
+
+    # Zipping up the lambda function
+    os.system(f'zip {output_zip} {lambda_file}')
+
+    # Saving lambda_function.py to s3 bucket
+    save_to_s3(bucket, output_zip, output_zip)
+
+    # Uploading lambda_function.py to s3 bucket 
+    link_lambda(target_lambda, bucket, output_zip)
