@@ -9,9 +9,9 @@ etl_file = 'MidnightPusher.py'
 ml_file = 'StartEncodingJob.py'
 failsafe_file = 'Failsafe-EC2-Costs.py'
 
-save_to_s3('toast-scripts', path_to_lambda+etl_file, etl_file)
-save_to_s3('toast-scripts', path_to_lambda+ml_file, ml_file)
-save_to_s3('toast-scripts', path_to_lambda+failsafe_file, failsafe_file)
+save_to_s3(lambda_bucket, path_to_lambda+etl_file, etl_file)
+save_to_s3(lambda_bucket, path_to_lambda+ml_file, ml_file)
+save_to_s3(lambda_bucket, path_to_lambda+failsafe_file, failsafe_file)
 
 
 link_lambda('MidnightPusher', lambda_bucket, etl_file)
