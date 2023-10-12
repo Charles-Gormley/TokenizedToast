@@ -29,6 +29,10 @@ class ProcessContent:
             self.db = torch.load(embeddings_path)
 
         def load_encodings(self, embeddings_path ='/home/ec2-user/embeddings.pth'):
+            self.load_df()
+            self.load_tensors()
+
+            
             tensors = self.db['tensor']
             encodings_list = [tensor.cpu().numpy() for tensor in tensors]
             self.vectors = np.vstack(encodings_list)

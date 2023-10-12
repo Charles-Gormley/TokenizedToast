@@ -6,3 +6,4 @@ rss-feeds.json
 *.pem
 *.ppk
 *.env
+.env

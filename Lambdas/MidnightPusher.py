@@ -14,6 +14,7 @@ def lambda_handler(event, context, set_article_num=False):
     git_path = "/home/ec2-user/TokenizedToast/Misc/Helper-Scripts/setup_git_ec2.py"
     
     git_command = f'sudo -u ec2-user /usr/local/bin/python3.11 {git_path} >> /tmp/git_process.log 2>&1'
+    time.sleep(5)
 
     if set_article_num:
         main_command = f'sudo -u ec2-user /usr/local/bin/python3.11 {main_path} --article_num {set_article_num}  >> /tmp/temp.log 2>&1'

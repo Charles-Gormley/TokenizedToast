@@ -8,7 +8,6 @@ import json
 import argparse
 from datetime import datetime
 
-
 from article_extraction import process_feed
 
 os.system('/usr/local/bin/python3.11 /home/ec2-user/Misc/Helper-Scripts/lambda_uploader.py')

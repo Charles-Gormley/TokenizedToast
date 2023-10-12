@@ -13,6 +13,8 @@ def lambda_handler(event, context):
     git_path = "/home/ec2-user/TokenizedToast/Misc/Helper-Scripts/setup_git_ec2.py"
     
     git_command = f'sudo -u ec2-user /usr/local/bin/python3.9 {git_path} >> /tmp/git_process.log 2>&1'
+    time.sleep(5)
+
     main_command = f'sudo -u ec2-user /usr/local/bin/python3.9 {main_path} >> /tmp/temp.log 2>&1'
     
     # Start the instance

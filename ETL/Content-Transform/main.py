@@ -16,7 +16,6 @@ cleaned_data_csv_path = "/home/ec2-user/" + cleaned_data_csv_fn
 cleaner = Cleaner(content_json_path)
 df = cleaner.clean_data()
 
-
 with open(cleaned_data_path, 'wb') as f:
     pickle.dump(df, f)
 

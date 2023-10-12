@@ -8,4 +8,3 @@ os.system('git reset --hard')
 os.system("git fetch")
 os.system("git pull")
 
-
