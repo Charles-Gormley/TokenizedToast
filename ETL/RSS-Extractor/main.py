@@ -11,6 +11,9 @@ from datetime import datetime
 
 from article_extraction import process_feed
 
+os.system('/usr/local/bin/python3.11 /home/ec2-user/Misc/Helper-Scripts/lambda_uploader.py')
+os.system('/usr/local/bin/python3.11 /home/ec2-user/Misc/Helper-Scripts/emr_uploader.py')
+
 import argparse
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some arguments.")
@@ -122,11 +125,6 @@ save_to_s3("toast-daily-content", df_file_path, cleaned_data_fn_date)
 logging.info("Saving csv file s3")
 save_to_s3("toast-daily-content", csv_file_path, cleaned_data_csv_fn)
 
-logging.info('Trigger EMR Job')
-os.system("sudo chmod 777 /home/ec2-user/TokenizedToast/ETL/EMR/cli-command.sh")
-os.chdir('/home/ec2-user/TokenizedToast/ETL/EMR/')
-os.system('./cli-command.sh')
-# Section: Shutting off instance
 
 if set_article_num != 5:
     logging.info("Process Finished Shuting off ec2 instance")
