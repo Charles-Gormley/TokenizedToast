@@ -81,4 +81,9 @@ class UserStructure:
             json.dump(json_data, json_file)
         
         os.system(f'aws s3 cp {self.local_path}/{file_name} s3://{self.s3_bucket_name}/{file_name}')
+
+    def save_user_embeddigns_to_s3(embeddings, name, user_id):
+        pass
         
+    def get_user_embeddings(name, user_id): 
+        pass
