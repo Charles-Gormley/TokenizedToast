@@ -1,8 +1,8 @@
 from recommender_class import Recommendations
 from load_content import ProcessContent
 
-import os 
-os.chdir("/home/ec2-user/TokenizedToast/User")
+from sys import path
+path.insert("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
 
