@@ -1,7 +1,7 @@
 import faiss
 import numpy as np
 
-class Recommendations:
+class Recommendations():
     def __init__(self, vector_embedding="BERT", indexing_technique:str="FlatL2", distance_measurement:str="L2"):
         # Embedding model choice
         self.vector_embedding = vector_embedding

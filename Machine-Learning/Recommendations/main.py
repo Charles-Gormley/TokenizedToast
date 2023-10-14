@@ -97,7 +97,3 @@ for query in queries:
         print(a)
         query['articles'].append(a)
     # Send to Lambda with (Email, Preferences, Name, Articles)
-
-
-
-
