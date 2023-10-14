@@ -6,7 +6,7 @@ path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
 
-users = u.load_users_From_s3()
+users = u.load_users_from_s3()
 print(users)
 
 recommender = Recommendations()
