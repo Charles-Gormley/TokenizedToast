@@ -101,16 +101,15 @@ query_data = search_data[0]
 
 
 for query in queries:
-    i = 0
     query['articles'] = []
     for interest in query['embeddings']: 
         distances, seq_indices = recommender.search(interest, 2)
         indices = index_data[seq_indices]
         
-        i += 1
-        print(i)
+        print("Interest:", interest)
         for i in indices[0]:
             a = content.grab_article(i)
             print(a)
             query['articles'].append(a)
     # Send to Lambda with (Email, Preferences, Name, Articles)
+
