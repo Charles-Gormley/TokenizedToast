@@ -13,7 +13,7 @@ logging.info("Loading in User encoding library")
 path.append("/home/ec2-user/TokenizedToast/Machine-Learning/User-Encoding")
 from encoder import encode_single_article
 
-logging.info("Loading in hte user events library")
+logging.info("Loading in the user events library")
 path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
