@@ -51,7 +51,7 @@ class UserStructure:
         with open(f'users.json', 'w') as json_file:
             json.dump(json_data, json_file)
 
-        os.system(f'aws s3 cp /users.json s3://{self.s3_bucket_name}')
+        os.system(f'aws s3 cp users.json s3://{self.s3_bucket_name}')
 
     def save_user_info_json_to_s3(self, user_info, name, user_id):
         file_name = f"{user_id}-{name}-user-info.json"
