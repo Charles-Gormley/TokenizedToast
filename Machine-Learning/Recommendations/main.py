@@ -24,6 +24,7 @@ queries = []
 
 for user in users:
     if not user['new']: # Basically if it is an old user with embeddings saved.
+        ###### Old users ###### 
         # Get the email
         # Get the Name
         query = dict()
@@ -32,11 +33,14 @@ for user in users:
         system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pt ")
         system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pkl ")
 
+        with open("embeddings.pkl", "rb") as f:
+            tensor_list = pickle.load(f)
+
         query['name'] = user['name']
         query['email'] = info['Email']
         query['pref'] = info['Summarization preferences']
         # query['embeddings'] = load('embeddings.pt') # This is v1.1
-        query['embeddings'] = pickle.load('embeddings.pkl')
+        query['embeddings'] = tensor_list 
         queries.append(query)
         
         
@@ -53,7 +57,7 @@ for user in users:
             tensor = encode_single_article(topic)
             tensor_list.append(tensor)
 
-        with open("embeddings.pkl", "w") as f:
+        with open("embeddings.pkl", "wb") as f:
             pickle.dump(tensor_list, f)
 
 
