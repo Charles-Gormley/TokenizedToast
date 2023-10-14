@@ -46,6 +46,7 @@ for user in users:
         
 
     if user['new'] and u.check_s3_interest(user['name'], user['user_id']):
+        ###### New Users ###### 
         logging.info(f"Converting {user['user_id']}-{user['name']} to a new user")
         user['new'] = False
         interests = u.load_user_interest(user['name'], user['user_id'])
@@ -59,7 +60,6 @@ for user in users:
 
         with open("embeddings.pkl", "wb") as f:
             pickle.dump(tensor_list, f)
-
 
         combined_tensor = stack(tensor_list) # Stack tensor to mulitple 3 dimensions
         save(combined_tensor, 'embeddings.pt') # Torch function
@@ -102,11 +102,11 @@ query_data = search_data[0]
 
 for query in queries:
     query['articles'] = []
-    for interest in query['embeddings']: 
-        distances, seq_indices = recommender.search(interest, 2)
+    for interest_embedding in query['embeddings']: 
+        distances, seq_indices = recommender.search(interest_embedding, 2)
         indices = index_data[seq_indices]
         
-        print("Interest:", interest)
+        print("Interest:", interest_embedding)
         for i in indices[0]:
             a = content.grab_article(i)
             print(a)
