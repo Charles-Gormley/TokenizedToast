@@ -41,7 +41,8 @@ for user in users:
         system(f"aws s3 cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")        
         
     u.update_users_json(users)
-        
+
+# Use json_data
 
 recommender = Recommendations()
 
@@ -59,6 +60,7 @@ recommender.eliminate_duplicate_vectors()
 # Check if each of the users have user embeddings
 
 #TODO: Load in data from query BERT Embeddings
+
 
 
 query_data = recommender.create_test_data(num_samples=1)
