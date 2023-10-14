@@ -108,7 +108,9 @@ for query in queries:
         
         for i in indices[0]:
             a = content.grab_article(i)
-            print(a.columns)
+            # Index(['index', 'link', 'title', 'content', 'date'], dtype='object')
+            article_tuple = (a['title'], a['content'])
+            print(article_tuple)
             query['articles'].append(a)
     # Send to Lambda with (Email, Preferences, Name, Articles)
 
