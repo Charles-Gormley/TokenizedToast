@@ -30,8 +30,8 @@ for user in users:
         query = dict()
         info = u.load_user_info(user['name'], user['user_id'])
         logging.info(f"Loading in embeddings for {user['user_id']}-{user['name']}")
-        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pt ")
-        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pkl embeddings.pkl ")
+        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pt")
+        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pkl embeddings.pkl")
 
         with open("embeddings.pkl", "rb") as f:
             tensor_list = pickle.load(f)
@@ -62,12 +62,12 @@ for user in users:
 
 
         combined_tensor = stack(tensor_list) # Stack tensor to mulitple 3 dimensions
-        save(combined_tensor, 'combined_topic_embeddings.pt') # Torch function
+        save(combined_tensor, 'embeddings.pt') # Torch function
 
         # Save BERT Embeddings to users.
         logging.info(f"Saving embeddings for {user['user_id']}-{user['name']}")
-        system(f"aws s3 cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")
-        system(f"aws s3 cp combined_topic_embeddings.pkl s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pkl")
+        system(f"aws s3 cp embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")
+        system(f"aws s3 cp embeddings.pkl s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pkl")
         # Get the embedding vector, the name and email of the user.
 
         # Getting query data:
