@@ -31,7 +31,7 @@ for user in users:
         info = u.load_user_info(user['name'], user['user_id'])
         logging.info(f"Loading in embeddings for {user['user_id']}-{user['name']}")
         system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pt ")
-        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pkl ")
+        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pkl embeddings.pkl ")
 
         with open("embeddings.pkl", "rb") as f:
             tensor_list = pickle.load(f)
