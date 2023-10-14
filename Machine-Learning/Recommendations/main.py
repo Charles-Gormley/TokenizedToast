@@ -5,6 +5,7 @@ from torch import stack, save, load
 
 from os import system
 from sys import path
+import pickle
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -28,12 +29,14 @@ for user in users:
         query = dict()
         info = u.load_user_info(user['name'], user['user_id'])
         logging.info(f"Loading in embeddings for {user['user_id']}-{user['name']}")
-        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt combined_topic_embeddings.pt ")
+        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pt ")
+        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt embeddings.pkl ")
 
         query['name'] = user['name']
         query['email'] = info['Email']
         query['pref'] = info['Summarization preferences']
-        query['embeddings'] = load('combined_topic_embeddings.pt')
+        # query['embeddings'] = load('embeddings.pt') # This is v1.1
+        query['embeddings'] = pickle.load('embeddings.pkl')
         queries.append(query)
         
         
@@ -50,13 +53,17 @@ for user in users:
             tensor = encode_single_article(topic)
             tensor_list.append(tensor)
 
-        combined_tensor = stack(tensor_list) # Stack tensor to mulitple 3 dimensions
+        with open("embeddings.pkl", "w"):
+            pickle.dump(tensor_list)
 
+
+        combined_tensor = stack(tensor_list) # Stack tensor to mulitple 3 dimensions
         save(combined_tensor, 'combined_topic_embeddings.pt') # Torch function
 
         # Save BERT Embeddings to users.
         logging.info(f"Saving embeddings for {user['user_id']}-{user['name']}")
         system(f"aws s3 cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")
+        system(f"aws s3 cp combined_topic_embeddings.pkl s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pkl")
         # Get the embedding vector, the name and email of the user.
 
         # Getting query data:
@@ -65,7 +72,9 @@ for user in users:
         query['name'] = user['name']
         query['email'] = info['Email']
         query['pref'] = info['Summarization preferences']
-        query['embeddings'] = combined_tensor
+        # query['embeddings'] = combined_tensor # This is for v1.1
+        query['embeddings'] = tensor_list
+
         queries.append(query)
         
     u.update_users_json(users)
@@ -88,12 +97,14 @@ query_data = search_data[0]
 
 
 for query in queries:
-    distances, seq_indices = recommender.search(query['embeddings'], 2)
-    indices = index_data[seq_indices]
     query['articles'] = []
+    for interest in query['embeddings']: 
+        distances, seq_indices = recommender.search(interest, 2)
+        indices = index_data[seq_indices]
+        
     
-    for i in indices[0]:
-        a = content.grab_article(i)
-        print(a)
-        query['articles'].append(a)
+        for i in indices[0]:
+            a = content.grab_article(i)
+            print(a)
+            query['articles'].append(a)
     # Send to Lambda with (Email, Preferences, Name, Articles)
