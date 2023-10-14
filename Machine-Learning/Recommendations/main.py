@@ -38,7 +38,7 @@ for user in users:
 
         # Save BERT Embeddings to users.
         logging.info(f"Saving embeddings for {user['user_id']}-{user['name']}")
-        system(f"aws cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")        
+        system(f"aws s3 cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")        
         
     u.update_users_json(users)
         
