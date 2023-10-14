@@ -7,9 +7,6 @@ recommender = Recommendations()
 content = ProcessContent()
 search_data, index_data = content.load_encodings()
 
-print(index_data.shape)
-print(search_data.shape)
-print(type(index_data))
 
 # Check if BERT embeddings are valid
 recommender.add_vectors_to_index(search_data)

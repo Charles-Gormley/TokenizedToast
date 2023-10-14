@@ -1,5 +1,5 @@
 import json
-from uuid import uuid5
+from random import randint
 import os
 
 
@@ -10,7 +10,7 @@ class UserStructure:
         self.local_path = 'home/ec2-user/TokenizedToast/User'
 
     def add_user(self, email, name, summarization_preferences):
-        user_id = str(uuid5())  # generate unique user_id using uuid
+        user_id = str(randint(10000, 99999))  # generate unique user_id using randint
 
         new_user = {
             "user_id": user_id,
@@ -29,18 +29,20 @@ class UserStructure:
         
         return new_user, user_info
     
-    def add_user_interests(self, topic_list, **kwargs):
-        interests = dict()
-        interests['topics'] = topic_list
-        for key, value in kwargs.items():
-            interests[key] = value
-        
-
     def load_users_from_s3(self) -> list:
         os.system(f'aws s3 cp s3://{self.s3_bucket_name}/users.json {self.local_path}/users.json')
         with open(f'{self.local_path}/users.json', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
+
+    def add_user_interests(self, name, user, topic_list, **kwargs):
+
+        interests = dict()
+        interests['topics'] = topic_list
+        for key, value in kwargs.items():
+            interests[key] = value
+
+        self.save_users_interests_to_s3(name, user, interests)
     
     def save_user_to_s3(self, new_user):
         json_data = self.load_users_from_s3()
