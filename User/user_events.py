@@ -35,6 +35,11 @@ class UserStructure:
         with open('users.json', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
+    
+    def update_users_json(self, json_data):
+        with open(f'users.json', 'w') as json_file:
+            json.dump(json_data, json_file)
+        os.system(f'aws s3 cp users.json s3://{self.s3_bucket_name}/users.json')
 
     def add_user_interests(self, name, user, topic_list, **kwargs):
         interests = dict()
@@ -73,6 +78,13 @@ class UserStructure:
         with open(f'{file_name}', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
+    
+    def check_s3_interest(self, name, user_id) -> bool:
+        result = os.system(f"aws s3 ls s3://{self.s3_bucket_name}/{user_id}-{name}/user-info.json")
+        if not result: # Result will return 0 if true. That's how AWS is doing this.
+            return True
+        return False 
+
 
     def update_users_interests_to_s3(self, name:str, user_id:str, new_interests:dict):
         json_data = self.load_users_interests(name, user_id)
@@ -84,5 +96,7 @@ class UserStructure:
         
         with open(f'{file_name}', 'w') as json_file:
             json.dump(json_data, json_file)
+
+        # Update them being a new user. 
         
         os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{folder_name}/{file_name}')

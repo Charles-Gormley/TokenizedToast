@@ -1,13 +1,40 @@
 from recommender_class import Recommendations
 from load_content import ProcessContent
 
+from torch import stack, save
+
+from os import system
+
+path.append("/home/ec2-user/TokenizedToast/Machine-Learning/User-Encoding")
+from encoder import encode_single_article
+
 from sys import path
 path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
 
 users = u.load_users_from_s3()
-print(users)
+for user in users:
+    if user['new'] and u.check_s3_interest(user['name'], user['user_id']):
+        user['new'] = False
+        interests = u.load_user_interests(user['name'], user['user_id'])
+        topics = interests['topics']
+        
+        # Embed Topics with BERT
+        tensor_list = list()
+        for topic in topics:
+            tensor = encode_single_article(topic)
+            tensor_list.append(tensor)
+
+        combined_tensor = stack(tensor_list) # Stack tensor to mulitple 3 dimensions
+
+        save(combined_tensor, 'combined_topic_embeddings.pt') # Torch function
+
+        # Save BERT Embeddings to users.
+        system(f"aws cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")        
+        
+    u.update_users_json(users)
+        
 
 recommender = Recommendations()
 

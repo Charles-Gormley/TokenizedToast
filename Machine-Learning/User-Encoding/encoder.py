@@ -18,6 +18,54 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 model.eval()
 
+def encode_single_article(text):
+    """
+    Encodes a single piece of text (article) using BERT and returns its encoded tensor representation.
+
+    Args:
+    - text (str): The article content to encode.
+
+    Returns:
+    - torch.Tensor: The encoded representation of the article.
+    """
+    # Tokenize the text
+    marked_text = "[CLS] " + text + " [SEP]"
+    tokenized_text = tokenizer.tokenize(marked_text)
+    
+    # If the text is too long, chunk it into sequences of up to 512 tokens
+    max_length = 512
+    if len(tokenized_text) > max_length:
+        tokenized_text_chunks = [tokenized_text[i:i + max_length] for i in range(0, len(tokenized_text), max_length)]
+    else:
+        tokenized_text_chunks = [tokenized_text]
+
+    pooled_outputs = []
+    
+    for tokenized_text in tokenized_text_chunks:
+        indexed_tokens = tokenizer.convert_tokens_to_ids(tokenized_text)
+        segments_ids = [1] * len(tokenized_text)
+
+        # Convert inputs to PyTorch tensors
+        tokens_tensor = torch.tensor([indexed_tokens])
+        segments_tensors = torch.tensor([segments_ids])
+
+        # Predict hidden states features for each layer
+        with torch.no_grad():
+            outputs = model(tokens_tensor, segments_tensors)
+        
+        # Use the embeddings from the last layer
+        last_layer = outputs[0]
+
+        # Mean pool the token embeddings to get a single vector for the chunk
+        mean_pooled = torch.mean(last_layer, dim=1)
+        pooled_outputs.append(mean_pooled)
+    
+    # Mean pool the chunk embeddings to get a single vector for the text
+    pooled_output = torch.mean(torch.stack(pooled_outputs), dim=0)
+    
+    return pooled_output
+
+
 def load_df(df_path) -> pd.DataFrame:
     df = pd.read_pickle(df_path)
     df.dropna(how="all", inplace=True)
