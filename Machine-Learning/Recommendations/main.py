@@ -53,8 +53,8 @@ for user in users:
             tensor = encode_single_article(topic)
             tensor_list.append(tensor)
 
-        with open("embeddings.pkl", "w"):
-            pickle.dump(tensor_list)
+        with open("embeddings.pkl", "w") as f:
+            pickle.dump(tensor_list, f)
 
 
         combined_tensor = stack(tensor_list) # Stack tensor to mulitple 3 dimensions
