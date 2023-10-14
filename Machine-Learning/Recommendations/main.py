@@ -2,7 +2,7 @@ from recommender_class import Recommendations
 from load_content import ProcessContent
 
 from sys import path
-path.insert("/home/ec2-user/TokenizedToast/User")
+path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
 
