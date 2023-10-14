@@ -4,11 +4,16 @@ from load_content import ProcessContent
 from torch import stack, save
 
 from os import system
+from sys import path
+import logging
 
+
+
+logging.info("Loading in User encoding library")
 path.append("/home/ec2-user/TokenizedToast/Machine-Learning/User-Encoding")
 from encoder import encode_single_article
 
-from sys import path
+logging.info("Loading in hte user events library")
 path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
@@ -16,6 +21,7 @@ u = UserStructure()
 users = u.load_users_from_s3()
 for user in users:
     if user['new'] and u.check_s3_interest(user['name'], user['user_id']):
+        logging.info(f'Converting {user['user_id']}-{user['name']} to a new user' )
         user['new'] = False
         interests = u.load_user_interests(user['name'], user['user_id'])
         topics = interests['topics']
@@ -31,6 +37,7 @@ for user in users:
         save(combined_tensor, 'combined_topic_embeddings.pt') # Torch function
 
         # Save BERT Embeddings to users.
+        logging.info(f"Saving embeddings for {user['user_id']}-{user['name']}")
         system(f"aws cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")        
         
     u.update_users_json(users)
