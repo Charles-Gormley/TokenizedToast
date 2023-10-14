@@ -1,6 +1,11 @@
 from recommender_class import Recommendations
 from load_content import ProcessContent
 
+import os 
+os.chdir("/home/ec2-user/TokenizedToast/User")
+from user_events import UserStructure
+u = UserStructure()
+
 recommender = Recommendations()
 
 # Load in data from BERT embeddings
@@ -13,6 +18,8 @@ recommender.add_vectors_to_index(search_data)
 recommender.eliminate_duplicate_vectors()
 
 # TODO: Create new drop duplicates function. 
+
+# Check if each of the users have user embeddings
 
 #TODO: Load in data from query BERT Embeddings
 
