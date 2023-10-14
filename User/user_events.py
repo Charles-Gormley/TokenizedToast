@@ -6,7 +6,7 @@ import os
 class UserStructure:
     
     def __init__(self, s3_bucket_name="toast-users"):
-        self.s3_bucket = s3_bucket_name
+        self.s3_bucket_name = s3_bucket_name
         self.local_path = 'home/ec2-user/TokenizedToast/User'
 
     def add_user(self, email, name, summarization_preferences):
