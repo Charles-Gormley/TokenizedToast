@@ -13,11 +13,12 @@ class UserStructure:
         user_id = str(uuid5())  # generate unique user_id using uuid
 
         new_user = {
-            "User_id": user_id,
-            "New user": True,
-            "S3 Link to embeddings-numpy-file": None
+            "user_id": user_id,
+            "name": name,
+            "new": True,
+            "s3": None
         }
-        self.save_users_to_s3(new_user) # Save the users.json file to s3.
+        self.save_user_to_s3(new_user) # Save the users.json file to s3.
 
         user_info = {
             "Email": email,
@@ -40,9 +41,8 @@ class UserStructure:
         with open(f'{self.local_path}/users.json', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
-            
-
-    def save_users_to_s3(self, new_user):
+    
+    def save_user_to_s3(self, new_user):
         json_data = self.load_users_from_s3()
         json_data.append(new_user)
         with open(f'{self.local_path}/users.json', 'w') as json_file:
@@ -81,9 +81,3 @@ class UserStructure:
             json.dump(json_data, json_file)
         
         os.system(f'aws s3 cp {self.local_path}/{file_name} s3://{self.s3_bucket_name}/{file_name}')
-
-    def save_user_embeddigns_to_s3(embeddings, name, user_id):
-        pass
-        
-    def get_user_embeddings(name, user_id): 
-        pass
