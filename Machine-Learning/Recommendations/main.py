@@ -6,6 +6,9 @@ path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
 
+users = u.load_users_From_s3()
+print(users)
+
 recommender = Recommendations()
 
 # Load in data from BERT embeddings
@@ -18,8 +21,7 @@ recommender.add_vectors_to_index(search_data)
 recommender.eliminate_duplicate_vectors()
 
 # TODO: Create new drop duplicates function. 
-users = u.load_users_From_s3()
-print(users)
+
 # Check if each of the users have user embeddings
 
 #TODO: Load in data from query BERT Embeddings
