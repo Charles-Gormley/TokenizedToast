@@ -6,7 +6,7 @@ from torch import stack, save
 from os import system
 from sys import path
 import logging
-
+logging.basicConfig(level=logging.INFO)
 
 
 logging.info("Loading in User encoding library")
