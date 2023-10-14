@@ -71,7 +71,7 @@ class UserStructure:
         os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{folder_name}/{file_name}')
 
     
-    def load_users_interests(self, name, user_id) -> dict:
+    def load_user_interest(self, name, user_id) -> dict:
         folder_name = f"{user_id}-{name}"
         file_name = "user-interests.json"
         os.system(f'aws s3 cp s3://{self.s3_bucket_name}/{folder_name}/{file_name} {file_name}')

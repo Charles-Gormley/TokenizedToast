@@ -23,7 +23,7 @@ for user in users:
     if user['new'] and u.check_s3_interest(user['name'], user['user_id']):
         logging.info(f"Converting {user['user_id']}-{user['name']} to a new user")
         user['new'] = False
-        interests = u.load_user_interests(user['name'], user['user_id'])
+        interests = u.load_user_interest(user['name'], user['user_id'])
         topics = interests['topics']
         
         # Embed Topics with BERT
