@@ -30,7 +30,7 @@ class UserStructure:
         return new_user, user_info
     
     def load_users_from_s3(self) -> list:
-        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/users.json {self.local_path}/users.json')
+        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/users.json {self.local_path}')
         with open(f'{self.local_path}/users.json', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
@@ -50,7 +50,7 @@ class UserStructure:
         with open(f'{self.local_path}/users.json', 'w') as json_file:
             json.dump(json_data, json_file)
 
-        os.system(f'aws s3 cp {self.local_path}/users.json s3://{self.s3_bucket_name}/users.json')
+        os.system(f'aws s3 cp {self.local_path}/users.json s3://{self.s3_bucket_name}')
 
     def save_user_info_json_to_s3(self, user_info, name, user_id):
         file_name = f"{user_id}-{name}/user-info.json"
@@ -67,7 +67,7 @@ class UserStructure:
     
     def load_users_interests(self, name, user_id) -> dict:
         file_name = f"{user_id}-{name}/user-interests.json"
-        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/{file_name} {self.local_path}/{file_name}')
+        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/{file_name} {self.local_path}')
         with open(f'{self.local_path}/{file_name}', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
