@@ -1,7 +1,7 @@
 from recommender_class import Recommendations
 from load_content import ProcessContent
 
-from torch import stack, save
+from torch import stack, save, load
 
 from os import system
 from sys import path
@@ -19,7 +19,25 @@ from user_events import UserStructure
 u = UserStructure()
 
 users = u.load_users_from_s3()
+queries = []
+
 for user in users:
+    if not user['new']: # Basically if it is an old user with embeddings saved.
+        # Get the email
+        # Get the Name
+        query = dict()
+        info = u.load_user_info(user['name'], user['user_id'])
+        logging.info(f"Loading in embeddings for {user['user_id']}-{user['name']}")
+        system(f"aws s3 cp s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt combined_topic_embeddings.pt ")
+
+        query['name'] = user['name']
+        query['email'] = info['Email']
+        query['pref'] = info['Summarization preferences']
+        query['embeddings'] = load('combined_topic_embeddings.pt')
+        queries.append(query)
+        
+        
+
     if user['new'] and u.check_s3_interest(user['name'], user['user_id']):
         logging.info(f"Converting {user['user_id']}-{user['name']} to a new user")
         user['new'] = False
@@ -38,44 +56,48 @@ for user in users:
 
         # Save BERT Embeddings to users.
         logging.info(f"Saving embeddings for {user['user_id']}-{user['name']}")
-        system(f"aws s3 cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")        
+        system(f"aws s3 cp combined_topic_embeddings.pt s3://toast-users/{user['user_id']}-{user['name']}/embeddings.pt")
+        # Get the embedding vector, the name and email of the user.
+
+        # Getting query data:
+        query = dict()
+        info = u.load_user_info(user['name'], user['user_id'])
+        query['name'] = user['name']
+        query['email'] = info['Email']
+        query['pref'] = info['Summarization preferences']
+        query['embeddings'] = combined_tensor
+        queries.append(query)
         
     u.update_users_json(users)
 
-# Use json_data
 
-recommender = Recommendations()
 
-# Load in data from BERT embeddings
-content = ProcessContent()
+logging.info('Initializing Content Process class and load in bert embeddings.')
+content = ProcessContent() 
 search_data, index_data = content.load_encodings()
 
 
-# Check if BERT embeddings are valid
-recommender.add_vectors_to_index(search_data)
-recommender.eliminate_duplicate_vectors()
 
-# TODO: Create new drop duplicates function. 
-
-# Check if each of the users have user embeddings
-
-#TODO: Load in data from query BERT Embeddings
-
-
+logging("Adding vectors to recommendation class")
+recommender = Recommendations() # Initializing Recommender Class
+recommender.add_vectors_to_index(search_data) # Check if BERT embeddings are valid
+recommender.eliminate_duplicate_vectors() # Eliminating any other duplicate articles with vector similarity
 
 query_data = recommender.create_test_data(num_samples=1)
 query_data = search_data[0]
-#TODO: Check if query BERT embeddings are valid
-
-#TODO: Decide on design of query data. It could have 2 dimensions for each user and a 3rd dimension for every user. Then maybe we could either just iteratively recommend OR 1) Flatten 2) Recommend
-
-# Grab Query Data .json with emails, list of encodings, user's summarization preferences. 
-# For each encoding obtain an article recommendation. 
-# For each recommendation send it to the GPT Summarizer 
-
-distances, seq_indices = recommender.search(query_data, 5)
-indices = index_data[seq_indices]
 
 
-for i in indices[0]:
-    print(content.grab_article(i))
+for query in queries:
+    distances, seq_indices = recommender.search(query['embeddings'], 2)
+    indices = index_data[seq_indices]
+    query['articles'] = []
+
+    for i in indices[0]:
+        a = content.grab_article(i)
+        print(a)
+        query['articles'].append(a)
+    # Send to Lambda with (Email, Preferences, Name, Articles)
+
+
+
+

@@ -79,6 +79,14 @@ class UserStructure:
             json_data = json.load(json_file)
         return json_data
     
+    def load_user_info(self, name, user_id) -> dict:
+        folder_name = f"{user_id}-{name}"
+        file_name = "user-info.json"
+        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/{folder_name}/{file_name} {file_name}')
+        with open(f'{file_name}', 'r') as json_file:
+            json_data = json.load(json_file)
+        return json_data
+    
     def check_s3_interest(self, name, user_id) -> bool:
         result = os.system(f"aws s3 ls s3://{self.s3_bucket_name}/{user_id}-{name}/user-info.json")
         if not result: # Result will return 0 if true. That's how AWS is doing this.
