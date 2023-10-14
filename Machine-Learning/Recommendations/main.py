@@ -79,7 +79,7 @@ search_data, index_data = content.load_encodings()
 
 
 logging("Adding vectors to recommendation class")
-recommender = Recommendations() # Initializing Recommender Class
+recommender = Recommendations # Initializing Recommender Class
 recommender.add_vectors_to_index(search_data) # Check if BERT embeddings are valid
 recommender.eliminate_duplicate_vectors() # Eliminating any other duplicate articles with vector similarity
 
@@ -91,7 +91,7 @@ for query in queries:
     distances, seq_indices = recommender.search(query['embeddings'], 2)
     indices = index_data[seq_indices]
     query['articles'] = []
-
+    
     for i in indices[0]:
         a = content.grab_article(i)
         print(a)
