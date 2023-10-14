@@ -2,6 +2,7 @@ import json
 from random import randint
 import os
 
+os.chdir('/home/ec2-user')
 
 class UserStructure:
     
@@ -30,7 +31,7 @@ class UserStructure:
         return new_user, user_info
     
     def load_users_from_s3(self) -> list:
-        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/users.json {self.local_path}/users.json')
+        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/users.json users.json')
         with open(f'{self.local_path}/users.json', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
