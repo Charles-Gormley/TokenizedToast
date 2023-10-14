@@ -37,7 +37,6 @@ class UserStructure:
         return json_data
 
     def add_user_interests(self, name, user, topic_list, **kwargs):
-
         interests = dict()
         interests['topics'] = topic_list
         for key, value in kwargs.items():
@@ -50,37 +49,40 @@ class UserStructure:
         json_data.append(new_user)
         with open(f'users.json', 'w') as json_file:
             json.dump(json_data, json_file)
-
-        os.system(f'aws s3 cp users.json s3://{self.s3_bucket_name}')
+        os.system(f'aws s3 cp users.json s3://{self.s3_bucket_name}/users.json')
 
     def save_user_info_json_to_s3(self, user_info, name, user_id):
-        file_name = f"{user_id}-{name}-user-info.json"
+        folder_name = f"{user_id}-{name}"
+        file_name = "user-info.json"
         with open(file_name, 'w') as f:
             json.dump(user_info, f)
-        os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{file_name}')
+        os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{folder_name}/{file_name}')
 
     def save_users_interests_to_s3(self, name, user_id, intersts_dict):
-        file_name = f"{user_id}-{name}/user-interests.json"
-        with open('file_name', 'w') as json_file:
+        folder_name = f"{user_id}-{name}"
+        file_name = "user-interests.json"
+        with open(file_name, 'w') as json_file:
             json.dump(intersts_dict, json_file)
-        os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{file_name}')
+        os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{folder_name}/{file_name}')
 
     
     def load_users_interests(self, name, user_id) -> dict:
-        file_name = f"{user_id}-{name}/user-interests.json"
-        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/{file_name} ')
+        folder_name = f"{user_id}-{name}"
+        file_name = "user-interests.json"
+        os.system(f'aws s3 cp s3://{self.s3_bucket_name}/{folder_name}/{file_name} {file_name}')
         with open(f'{file_name}', 'r') as json_file:
             json_data = json.load(json_file)
         return json_data
 
     def update_users_interests_to_s3(self, name:str, user_id:str, new_interests:dict):
         json_data = self.load_users_interests(name, user_id)
-        file_name =  f"{user_id}-{name}/user-interests.json"
-        
+
+        folder_name = f"{user_id}-{name}"
+        file_name =  "user-interests.json"
         for key, value in new_interests.items():
             json_data[key] = value
         
         with open(f'{file_name}', 'w') as json_file:
             json.dump(json_data, json_file)
         
-        os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{file_name}')
+        os.system(f'aws s3 cp {file_name} s3://{self.s3_bucket_name}/{folder_name}/{file_name}')
