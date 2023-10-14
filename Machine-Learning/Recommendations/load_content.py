@@ -13,7 +13,7 @@ class ProcessContent:
             m = now.month
             d = now.day
             y = now.year
-            cleaned_data_fn = f'cleaned-data-{y}-{m}-{d}.pkl'
+            cleaned_data_fn = f'cleaned-data{y}-{m}-{d}.pkl'
             self.df = pd.read_pickle("/home/ec2-user/" + cleaned_data_fn)
             self.df.drop_duplicates(subset="content", inplace=True)
             self.df.dropna(how="all", inplace=True)
