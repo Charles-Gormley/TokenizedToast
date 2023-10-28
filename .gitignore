@@ -7,3 +7,4 @@ rss-feeds.json
 *.ppk
 *.env
 .env
+client_secret*
