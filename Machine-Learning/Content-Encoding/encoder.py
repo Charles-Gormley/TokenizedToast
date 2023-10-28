@@ -3,7 +3,6 @@ import pandas as pd
 from transformers import BertTokenizer, BertModel
 import logging
 
-
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
