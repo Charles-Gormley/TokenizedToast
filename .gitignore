@@ -6,6 +6,7 @@ rss-feeds.json
 *.pem
 *.ppk
 *.env
+env.txt
 .env
 client_secret*
 Lambdas/Summarize&Send/*/**
