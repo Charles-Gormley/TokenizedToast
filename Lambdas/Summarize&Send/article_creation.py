@@ -1,20 +1,23 @@
 import openai
+from obtain_keys import load_api_keys
 import base64
 
-openai.api_key = 'YOUR_OPENAI_API_KEY'
+api_keys = load_api_keys()
+
+openai.api_key = api_keys['OPEN_AI']
 
 
 ###### Article Creation ######
 def create_title(article:str, preferences:str) -> str:
     response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    response=[
-        {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences} "},
-        {"role": "user", "content":{article} }
+    model="gpt-3.5-turbo-16k",
+    messages=[
+        {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}.Keep the title around 2-5 words. I just want you to respond with the title, nothing else."},
+        {"role": "user", "content":article}
       ],
     temperature=0.82,
-    max_tokens=1,
-    top_p=1,
+    max_tokens=30,
+    top_p=.9,
     frequency_penalty=0,
     presence_penalty=0
      )
@@ -23,13 +26,13 @@ def create_title(article:str, preferences:str) -> str:
 def summarize(article:str, preferences:str) -> str:
     response = openai.ChatCompletion.create(
     model="gpt-4",
-    response=[
-        {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}"},
-        {"role": "user", "content":{article} }
+    messages=[
+        {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}. Keep the summarizations of the articles around 200 -> 300 words. I just want you to respond with the summarization, nothing else."},
+        {"role": "user", "content":article}
       ],
     temperature=0.82,
-    max_tokens=1,
-    top_p=1,
+    max_tokens=800,
+    top_p=.9,
     frequency_penalty=0,
     presence_penalty=0
      )
@@ -37,14 +40,14 @@ def summarize(article:str, preferences:str) -> str:
 
 def create_email_subject(content:list, preferences:str) -> str:
     response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    response=[
-              {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}"},
-              {"role": "user", "content":{content}}
+    model="gpt-3.5-turbo-16k",
+    messages=[
+              {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep the title around 2-5 words. I just want you to respond with the title, nothing else."},
+              {"role": "user", "content": str(content)}
              ],
     temperature=0.82,
-    max_tokens=1,
-    top_p=1,
+    max_tokens=30,
+    top_p=.9,
     frequency_penalty=0,
     presence_penalty=0
      )
