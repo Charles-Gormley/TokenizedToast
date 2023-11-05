@@ -20,7 +20,7 @@ class ProcessContent:
 
 
         def grab_article(self, query_index:int) -> str:
-            print(len(self.df))
+            
             content_value = self.df[self.df["index"] == query_index]
             return content_value
         
@@ -38,7 +38,6 @@ class ProcessContent:
             self.vectors = np.vstack(encodings_list)
 
             ids = self.db['ID']
-            print(len(ids))
             ids_list = [tensor.cpu().numpy() for tensor in ids]
             id_vectors = np.vstack(ids_list).tolist()
             self.id_vectors = [item for sublist in id_vectors for item in sublist]

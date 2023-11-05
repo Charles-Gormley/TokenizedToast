@@ -144,11 +144,9 @@ def test_recommender(vector_embedding="BERT",
         # Basic assertions to check if everything is functioning
         assert distances.shape[1] == recommender.k
         assert indices.shape[1] == recommender.k
-        print(f"Queried vector found nearest neighbors at indices {indices} with distances {distances}")
+        
     
-    print("Checking batch recommendation")
+    
     distances, indices = recommender.search(query_vectors, 5)
     assert distances.shape[0] == batch
     assert indices.shape[0] == batch
-    print(f"Queried vectors found nearest neighbors at indices\n {indices} \nwith distances\n {distances}")
-    print("All tests passed!")
