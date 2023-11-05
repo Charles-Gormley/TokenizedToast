@@ -1,14 +1,12 @@
 import openai
 import base64
 
-<<<<<<< HEAD
-openai.api_key = 'YOUR_OPENAI_API_KEY'
-=======
+
 api_keys = load_api_keys()
 
 
 openai.api_key = api_keys['OPEN_AI']
->>>>>>> unixs update
+
 
 
 ###### Article Creation ######
