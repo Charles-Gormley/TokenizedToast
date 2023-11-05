@@ -104,11 +104,14 @@ def send_email_lambda(query:dict):
     
     query['request_type'] = 'email'
     payload = dict()
-    vars = ['preferences', 'articles', 'email_address', 'request_type']
+    payload = '{'
+    vars = ['preferences', 'email_address', 'request_type']
     for var in vars: 
-        payload[var] = query[var]
+        load = f'"{var}": "{query[var]}",'
+        payload = payload + load
+    load = f'"articles": {query["articles"]} '  
     
-    payload = json.dumps(payload)
+    
     system(f"aws lambda invoke --function-name {lambda_name} --payload {payload}")
 
 for query in queries: # Obtained from the above for loop over users.
