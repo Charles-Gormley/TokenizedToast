@@ -108,7 +108,7 @@ def send_email_lambda(query:dict):
     lambda_name = "Summarizer-Sender"
     query['request_type'] = 'email'
     payload = dict()
-    vars = ['preferences', 'email_address', 'request_type']
+    vars = ['preferences', 'articles', 'email_address', 'request_type']
     for var in vars: 
         payload[var] = query[var]
     payload = json.dumps(payload)
