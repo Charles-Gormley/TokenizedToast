@@ -109,7 +109,7 @@ def send_email_lambda(query:dict):
     for var in vars: 
         load = f'"{var}": "{query[var]}",'
         payload = payload + load
-    load = f'"articles": {query["articles"]}'
+    load = f'"articles": {str(query["articles"])}'
     payload = payload + load + "}"
     
     
