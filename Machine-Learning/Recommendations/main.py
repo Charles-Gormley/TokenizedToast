@@ -4,6 +4,7 @@ from load_content import ProcessContent
 from torch import stack, save, load
 
 from os import system
+import json
 from sys import path
 import pickle
 import logging
@@ -19,14 +20,15 @@ path.append("/home/ec2-user/TokenizedToast/User")
 from user_events import UserStructure
 u = UserStructure()
 
-users = u.load_users_from_s3()
+users = u.load_users_from_s3() # Loads all of the products users from S3.
 queries = []
+
+
 
 for user in users:
     if not user['new']: # Basically if it is an old user with embeddings saved.
         ###### Old users ###### 
-        # Get the email
-        # Get the Name
+        
         query = dict()
         info = u.load_user_info(user['name'], user['user_id'])
         logging.info(f"Loading in embeddings for {user['user_id']}-{user['name']}")
@@ -36,25 +38,26 @@ for user in users:
         with open("embeddings.pkl", "rb") as f:
             tensor_list = pickle.load(f)
 
-        query['name'] = user['name']
-        query['email'] = info['Email']
-        query['pref'] = info['Summarization preferences']
-        # query['embeddings'] = load('embeddings.pt') # This is v1.1
+        query['name'] = user['name'] 
+        query['email_address'] = info['Email']
+        query['preferences'] = info['Summarization preferences']
         query['embeddings'] = tensor_list 
+        # query['embeddings'] = load('embeddings.pt') # This is v1.1. Meaning this is how we are going to parrellize predictions across users.
+        
         queries.append(query)
         
         
 
-    if user['new'] and u.check_s3_interest(user['name'], user['user_id']):
+    if user['new'] and u.check_s3_interest(user['name'], user['user_id']): # This is a new user. This could also apply to users who are having their interests updated.
         ###### New Users ###### 
         logging.info(f"Converting {user['user_id']}-{user['name']} to a new user")
-        user['new'] = False
+        user['new'] = False # They are now no longer a new user when saved back to S3.
         interests = u.load_user_interest(user['name'], user['user_id'])
         topics = interests['topics']
         
         # Embed Topics with BERT
         tensor_list = list()
-        for topic in topics:
+        for topic in topics: # Since this is a new user they will need to have their topics encoded. 
             tensor = encode_single_article(topic)
             tensor_list.append(tensor)
 
@@ -74,10 +77,10 @@ for user in users:
         query = dict()
         info = u.load_user_info(user['name'], user['user_id'])
         query['name'] = user['name']
-        query['email'] = info['Email']
-        query['pref'] = info['Summarization preferences']
-        # query['embeddings'] = combined_tensor # This is for v1.1
+        query['email_address'] = info['Email']
+        query['preferences'] = info['Summarization preferences']
         query['embeddings'] = tensor_list
+        # query['embeddings'] = combined_tensor # This is for v1.1
 
         queries.append(query)
         
@@ -96,11 +99,15 @@ recommender = Recommendations() # Initializing Recommender Class
 recommender.add_vectors_to_index(search_data) # Check if BERT embeddings are valid
 recommender.eliminate_duplicate_vectors() # Eliminating any other duplicate articles with vector similarity
 
-query_data = recommender.create_test_data(num_samples=1)
-query_data = search_data[0]
+def send_email_lambda(query:dict):
+    lambda_name = "Summarizer-Sender"
+    query['request_type'] = 'email'
+    vars = ['preferences', 'articles', 'email_address', 'request_type', 'name']
+    payload =  {k: query[k] for k in vars if k in query}
+    payload = json.dumps(payload)
+    system(f"aws lambda invoke --function-name {lambda_name} --payload {payload}")
 
-
-for query in queries:
+for query in queries: # Obtained from the above for loop over users.
     query['articles'] = []
     for interest_embedding in query['embeddings']: 
         distances, seq_indices = recommender.search(interest_embedding, 2)
@@ -109,7 +116,11 @@ for query in queries:
         for i in indices[0]:
             a = content.grab_article(i)
             # Index(['index', 'link', 'title', 'content', 'date'], dtype='object')
-            article_tuple = (a['title'].iloc[0], a['content'].iloc[0])
-            query['articles'].append(article_tuple)
+            # article_tuple = (a['title'].iloc[0], a['content'].iloc[0])
+            query['articles'].append(a['content'].iloc[0]) # List of all articles the user would be interested in.
+        send_email_lambda(query)
+        
+
     # Send to Lambda with (Email, Preferences, Name, Articles)
+
 

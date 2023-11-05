@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 import openai
 import idna
 import resend
-=======
->>>>>>> 03abdf19ea5806a04d9be265f212b752a108517c
 import base64
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -18,7 +15,6 @@ from article_creation import create_content, create_email_html
 import json
 
 
-<<<<<<< HEAD
 openai.api_key = 'YOUR_OPENAI_API_KEY'
 
 def get_gmail_credentials():
@@ -34,23 +30,6 @@ def get_gmail_credentials():
             creds = flow.run_local_server(port=0)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-=======
-def get_gmail_credentials():
-    creds = None
-    creds = Credentials.from_authorized_user_file('token.json')
-
-    # if os.path.exists('client_secret.json'):
-    #     creds = Credentials.from_authorized_user_file('token.json')
-    # if not creds or not creds.valid:
-    #     if creds and creds.expired and creds.refresh_token:
-    #         creds.refresh(Request())
-    #     else:
-    #         flow = InstalledAppFlow.from_client_secrets_file(
-    #             'credentials.json', ['https://www.googleapis.com/auth/gmail.send'])
-    #         creds = flow.run_local_server(port=0)
-    #     with open('token.json', 'w') as token:
-    #         token.write(creds.to_json())
->>>>>>> 03abdf19ea5806a04d9be265f212b752a108517c
     return creds
 
 def send_email(subject:str, body:str, recipient:str):
@@ -78,26 +57,15 @@ def send_email(subject:str, body:str, recipient:str):
 
 def lambda_handler(event, context):
     # Extract event details
-<<<<<<< HEAD
     preferences = event['preferences']
     articles = event['articles']
     email_address = event['email_address']
-    request_type = event['request_type'] # Either Podcast or Email.
-=======
-    preferences = event['preferences'] # string
-    articles = event['articles'] # list of string articles
-    email_address = event['email_address'] # string
-    request_type = event['request_type'] # string Either Podcast or Email.
->>>>>>> 03abdf19ea5806a04d9be265f212b752a108517c
+    request_type = event['request_type'] # Either Podcast or Email
 
     # Summarize articles with OpenAI
     summarized_articles = []
     for article in articles:
-<<<<<<< HEAD
         content_dict = create_content(preferences, article)
-=======
-        content_dict = create_content(article, preferences)
->>>>>>> 03abdf19ea5806a04d9be265f212b752a108517c
         summarized_articles.append(content_dict)
 
     if request_type == "email":

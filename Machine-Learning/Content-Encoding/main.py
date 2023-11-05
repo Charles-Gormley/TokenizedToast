@@ -1,5 +1,6 @@
 import torch
 import os
+import subprocess
 from encoder import encode_dataframe_column, load_df
 import logging
 
@@ -68,8 +69,20 @@ logging.info("Saving Encodings to S3")
 save_to_s3("encoder-milvus-bucket", encoded_df_file, encoded_df_file)
 save_to_s3("encoder-milvus-bucket", embeddings_file, embeddings_file)
 
+
+
+logging.info("Running the Recommendation System")
+process = subprocess.Popen(['python3.9', 'TokenizedToast\Machine-Learning\Recommendations\main.py'])
+process.wait()
+
+logging.info(f"Deleting {cleaned_data_fn} from drive to save on storage")
+os.system(f"rm {cleaned_data_fn}")
+
 logging.info("Stopping Encoding | Milvus Instance")
 
 # Section: Shutting off instance
 logging.info("Process Finished Shuting off ec2 instance")
 stop_ec2_instance("i-061dff9fc11bb2250")
+
+
+# TODO: Make sure the git update is working 
