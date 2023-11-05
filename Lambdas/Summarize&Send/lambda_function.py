@@ -1,6 +1,5 @@
 import openai
 import idna
-import resend
 import base64
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -62,7 +61,6 @@ def lambda_handler(event, context):
     articles = event['articles']
     email_address = event['email_address']
     request_type = event['request_type'] 
-    name = event['name'] # Either Podcast or Email
 
     # Summarize articles with OpenAI
     summarized_articles = []
@@ -81,3 +79,6 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps('Email sent successfully!')
         }
+
+if __name__ == "__main__":
+    send_email("Testing", "Testing", "cgormley07@gmail.com")
