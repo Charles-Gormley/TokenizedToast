@@ -104,7 +104,7 @@ def send_email_lambda(query:dict):
     
     query['request_type'] = 'email'
     payload = dict()
-    vars = ['preferences', 'articles', 'email_address', 'request_type', 'name']
+    vars = ['preferences', 'articles', 'email_address', 'request_type']
     for var in vars: 
         payload[var] = query[var]
     

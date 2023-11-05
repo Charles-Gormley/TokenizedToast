@@ -60,7 +60,8 @@ def lambda_handler(event, context):
     preferences = event['preferences']
     articles = event['articles']
     email_address = event['email_address']
-    request_type = event['request_type'] # Either Podcast or Email
+    request_type = event['request_type'] 
+    name = event['name'] # Either Podcast or Email
 
     # Summarize articles with OpenAI
     summarized_articles = []
