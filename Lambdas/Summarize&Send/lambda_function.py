@@ -57,10 +57,12 @@ def send_email(subject:str, body:str, recipient:str):
 
 def lambda_handler(event, context):
     # Extract event details
+    print(event)
     preferences = event['preferences']
     articles = event['articles']
     email_address = event['email_address']
     request_type = event['request_type'] 
+    
 
     # Summarize articles with OpenAI
     summarized_articles = []

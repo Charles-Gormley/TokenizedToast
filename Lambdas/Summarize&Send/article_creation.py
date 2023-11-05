@@ -4,7 +4,6 @@ from obtain_keys import load_api_keys
 
 
 api_keys = load_api_keys()
-print(api_keys)
 
 openai.api_key = api_keys['OPEN_AI']
 
