@@ -109,7 +109,8 @@ def send_email_lambda(query:dict):
     for var in vars: 
         load = f'"{var}": "{query[var]}",'
         payload = payload + load
-    load = f'"articles": {query["articles"]} '  
+    load = f'"articles": {query["articles"]}'
+    payload = payload + load + "}"
     
     
     system(f"aws lambda invoke --function-name {lambda_name} --payload {payload}")
