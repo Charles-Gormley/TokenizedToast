@@ -118,9 +118,10 @@ def send_email_lambda(query:dict):
         payload = payload + load
     load = f'"articles": {str(query["articles"])}'
     payload = payload + load + "}"
+    payload = json.dumps(payload)
 
     response = lambda_client.invoke(
-    FunctionName='my-lambda-function',
+    FunctionName=lambda_name,
     InvocationType='RequestResponse',  # Use 'RequestResponse' for synchronous execution
     Payload=payload.encode('utf-8')
         )   
