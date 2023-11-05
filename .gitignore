@@ -11,3 +11,4 @@ env.txt
 credentials.json
 token.json
 Lambdas/Summarize&Send/*/**
+Lambdas/Summarize&Send/lambda_function.zip
