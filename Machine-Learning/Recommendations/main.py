@@ -3,6 +3,11 @@ from load_content import ProcessContent
 
 from torch import stack, save, load
 
+import boto3
+
+# Create a Lambda client
+lambda_client = boto3.client('lambda')
+
 from os import system
 import json
 from sys import path
@@ -101,6 +106,8 @@ recommender.eliminate_duplicate_vectors() # Eliminating any other duplicate arti
 
 def send_email_lambda(query:dict):
     lambda_name = "Summarizer-Sender"
+
+    
     
     query['request_type'] = 'email'
     payload = dict()
@@ -111,6 +118,12 @@ def send_email_lambda(query:dict):
         payload = payload + load
     load = f'"articles": {str(query["articles"])}'
     payload = payload + load + "}"
+
+    response = lambda_client.invoke(
+    FunctionName='my-lambda-function',
+    InvocationType='RequestResponse',  # Use 'RequestResponse' for synchronous execution
+    Payload=payload.encode('utf-8')
+        )   
     
     
     system(f"aws lambda invoke --function-name {lambda_name} --payload {payload}")
