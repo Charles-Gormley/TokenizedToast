@@ -106,28 +106,19 @@ recommender.eliminate_duplicate_vectors() # Eliminating any other duplicate arti
 
 def send_email_lambda(query:dict):
     lambda_name = "Summarizer-Sender"
-
-    
-    
     query['request_type'] = 'email'
     payload = dict()
-    payload = '{'
     vars = ['preferences', 'email_address', 'request_type']
     for var in vars: 
-        load = f'"{var}": "{query[var]}",'
-        payload = payload + load
-    load = f'"articles": {str(query["articles"])}'
-    payload = payload + load + "}"
+        payload[var] = query[var]
     payload = json.dumps(payload)
+    payload = payload.encode('utf-8')
 
     response = lambda_client.invoke(
-    FunctionName=lambda_name,
-    InvocationType='RequestResponse',  # Use 'RequestResponse' for synchronous execution
-    Payload=payload.encode('utf-8')
-        )   
-    
-    
-    system(f"aws lambda invoke --function-name {lambda_name} --payload {payload}")
+        FunctionName=lambda_name,
+        InvocationType='Event',  # Use 'RequestResponse' for synchronous execution
+        Payload=payload
+    )   
 
 for query in queries: # Obtained from the above for loop over users.
     query['articles'] = []
