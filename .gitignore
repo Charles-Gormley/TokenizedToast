@@ -8,5 +8,6 @@ rss-feeds.json
 *.env
 env.txt
 .env
-client_secret*
+credentials.json
+token.json
 Lambdas/Summarize&Send/*/**
