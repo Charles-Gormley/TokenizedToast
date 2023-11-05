@@ -14,7 +14,7 @@ def create_title(article:str, preferences:str) -> str:
     response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo-16k",
     messages=[
-        {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}. Keep only the title in the response, which should be 1-3 words which should have aim to be informative."},
+        {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}. Keep only the title in the response, which should be 1 to 8 words which should have aim to be informative."},
         {"role": "user", "content": article }
       ],
     temperature=0.82,
@@ -27,7 +27,7 @@ def create_title(article:str, preferences:str) -> str:
 
 def summarize(article:str, preferences:str) -> str:
     response = openai.ChatCompletion.create(
-    model="gpt-4",
+    model="gpt-3.5-turbo-16k",
     messages=[
         {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}. Keep only the content summary and inlcude nothing else in the response."},
         {"role": "user", "content": article }
@@ -44,7 +44,7 @@ def create_email_subject(content:list, preferences:str) -> str:
     response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo-16k",
     messages=[
-              {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep only the email subject in your respoonse, which should be 1-3 words which should have aim for a high email open rate."},
+              {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep only the email subject in your respoonse, which should be 1 to 8 words which should have aim for a high email open rate."},
               {"role": "user", "content": str(content)}
              ],
     temperature=0.82,

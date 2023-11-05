@@ -1,5 +1,6 @@
 import openai
 import idna
+
 import base64
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -14,13 +15,14 @@ from article_creation import create_content, create_email_html
 import json
 
 
+
 def get_gmail_credentials():
     creds = None
 
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json')
+    if os.path.exists('tmp/token.json'):
+        creds = Credentials.from_authorized_user_file('tmp/token.json')
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -28,7 +30,7 @@ def get_gmail_credentials():
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open('tmp/token.json', 'w') as token:
             token.write(creds.to_json())
     return creds
 
