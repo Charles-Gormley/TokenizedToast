@@ -1,7 +1,14 @@
 import openai
 import base64
 
+<<<<<<< HEAD
 openai.api_key = 'YOUR_OPENAI_API_KEY'
+=======
+api_keys = load_api_keys()
+
+
+openai.api_key = api_keys['OPEN_AI']
+>>>>>>> unixs update
 
 
 ###### Article Creation ######
@@ -194,7 +201,7 @@ def create_email_html(content:list, preferences:str, style:str) -> dict:
         <div class="container">
             <div class="header-box">
                 <div class="header">
-                    <img src="data:image/png;base64,{logo_encoded}" alt="Logo">
+                    <img src="https://toast-logos-newsletter.s3.amazonaws.com/ToastLogo-removebg-preview.png" alt="Logo">
                     <h1>Here's your Morning Toast</h1>
                 </div>
             </div>
@@ -203,6 +210,7 @@ def create_email_html(content:list, preferences:str, style:str) -> dict:
     </body>
     </html>
     '''
+    
     email['body'] = email_html
 
     return email
