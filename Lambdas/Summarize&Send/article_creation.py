@@ -13,72 +13,55 @@ MAX_RETRIES = 5
 
 ###### Article Creation ######
 def create_title(article:str, preferences:str) -> str:
-    attempt = 0
-    while attempt < MAX_RETRIES:
-        try: 
-            response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
-            messages=[
-                {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}. Keep only title in response, should be 1 to 8 words.."},
-                {"role": "user", "content": article }
-            ],
-            temperature=0.82,
-            max_tokens=5,
-            top_p=.9,
-            frequency_penalty=0,
-            presence_penalty=0
-            )
-            return response['choices'][0]['message']['content']
-        except:
-            attempt += 1
-            logging.info(f"Retry {str(attempt)} for Title Creation")
-            sleep(5)
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo-16k",
+    messages=[
+        {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}. Keep only title in response, should be 1 to 8 words"},
+        {"role": "user", "content": article }
+    ],
+    temperature=0.82,
+    max_tokens=10,
+    top_p=.9,
+    frequency_penalty=0,
+    presence_penalty=0
+    )
+    return response['choices'][0]['message']['content']
 
 
 def summarize(article:str, preferences:str) -> str:
-    attempt = 0
-    while attempt < MAX_RETRIES:
-        try: 
-            response = openai.ChatCompletion.create(
-            # model="gpt-3.5-turbo-16k",
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}. Try to keep the content summmary around 250 words and inlcude nothing else in the response. Keep only the news in in the summary rather than educating individuals on the basics."},
-                {"role": "user", "content": article }
-            ],
-            temperature=0.82,
-            max_tokens=500,
-            top_p=.9,
-            frequency_penalty=0,
-            presence_penalty=0
-            )
-            return response['choices'][0]['message']['content']
-        except:
-            attempt += 1
-            logging.info(f"Retry {str(attempt)} for Summarization")
-            sleep(5)
+    
+    response = openai.ChatCompletion.create(
+    # model="gpt-3.5-turbo-16k",
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}. Try to keep the content summmary around 250 words and inlcude nothing else in the response. Keep only the news in the summary rather than educating individuals on the basics."},
+        {"role": "user", "content": article }
+    ],
+    temperature=0.82,
+    max_tokens=500,
+    top_p=.9,
+    frequency_penalty=0,
+    presence_penalty=0
+    )
+    return response['choices'][0]['message']['content']
+        
 
 def create_email_subject(content:list, preferences:str) -> str:
-    attempt = 0
-    while attempt < MAX_RETRIES:
-        try: 
-            response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
-            messages=[
-                    {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep only the email subject in your respoonse, which should be 1 to 8 words. This should aim to have a high open rate."},
-                    {"role": "user", "content": str(content)}
-                    ],
-            temperature=0.82,
-            max_tokens=5,
-            top_p=.9,
-            frequency_penalty=0,
-            presence_penalty=0
-            )
-            return response['choices'][0]['message']['content']
-        except:
-            attempt += 1
-            logging.info(f"Retry {str(attempt)} for Email Subject")
-            sleep(5)
+    
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo-16k",
+    messages=[
+            {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep only the email subject in your respoonse, which should be 1 to 8 words. This should aim to have a high open rate."},
+            {"role": "user", "content": str(content)}
+            ],
+    temperature=0.82,
+    max_tokens=10,
+    top_p=.9,
+    frequency_penalty=0,
+    presence_penalty=0
+    )
+    return response['choices'][0]['message']['content']
+        
     
 
 def create_content(article:str, preferences:str) -> dict:
