@@ -30,6 +30,14 @@ class UserStructure:
         
         return new_user, user_info
     
+    def add_user_interests(self, name, user, topic_list, **kwargs):
+        interests = dict()
+        interests['topics'] = topic_list
+        for key, value in kwargs.items():
+            interests[key] = value
+
+        self.save_users_interests_to_s3(name, user, interests)
+    
     def load_users_from_s3(self) -> list:
         os.system(f'aws s3 cp s3://{self.s3_bucket_name}/users.json users.json')
         with open('users.json', 'r') as json_file:
@@ -40,14 +48,6 @@ class UserStructure:
         with open(f'users.json', 'w') as json_file:
             json.dump(json_data, json_file)
         os.system(f'aws s3 cp users.json s3://{self.s3_bucket_name}/users.json')
-
-    def add_user_interests(self, name, user, topic_list, **kwargs):
-        interests = dict()
-        interests['topics'] = topic_list
-        for key, value in kwargs.items():
-            interests[key] = value
-
-        self.save_users_interests_to_s3(name, user, interests)
     
     def save_user_to_s3(self, new_user):
         json_data = self.load_users_from_s3()

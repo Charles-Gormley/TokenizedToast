@@ -1,5 +1,6 @@
 import openai
 import idna
+import logging
 
 import base64
 from google.oauth2.credentials import Credentials
@@ -8,12 +9,13 @@ from google.auth.transport.requests import Request
 import os
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+import boto3
 
 from email.mime.text import MIMEText
 from article_creation import create_content, create_email_html
 
 import json
-
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def get_gmail_credentials():
@@ -21,16 +23,29 @@ def get_gmail_credentials():
 
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
-    if os.path.exists('tmp/token.json'):
-        creds = Credentials.from_authorized_user_file('tmp/token.json')
+    if 'AWS_EXECUTION_ENV' in os.environ:
+        s3_client = boto3.client('s3')
+        bucket = 'toast-summarizer'
+        fn = 'token.json'
+        fn_path = f'/tmp/{fn}'
+        s3_client.download_file(bucket, fn, fn_path)
+        # Grab token.json from s3 bucket --> /tmp/token.json.
+
+    if os.path.exists(fn_path):
+        logging.info("Found token json file")
+        creds = Credentials.from_authorized_user_file(fn_path)
     if not creds or not creds.valid:
+        logging.info("Invalid Credentials")
         if creds and creds.expired and creds.refresh_token:
+            logging.info("Refreshing Credentials")
             creds.refresh(Request())
         else:
+            logging.info("Grabbing creds from credentials json")
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('tmp/token.json', 'w') as token:
+        with open(fn_path, 'w') as token:
+            logging.info("writing creds to token.json.")
             token.write(creds.to_json())
     return creds
 
