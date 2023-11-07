@@ -13,55 +13,126 @@ MAX_RETRIES = 5
 
 ###### Article Creation ######
 def create_title(article:str, preferences:str) -> str:
-    response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo-16k",
-    messages=[
-        {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}. Keep only title in response, should be 1 to 8 words"},
-        {"role": "user", "content": article }
-    ],
-    temperature=0.82,
-    max_tokens=10,
-    top_p=.9,
-    frequency_penalty=0,
-    presence_penalty=0
-    )
-    return response['choices'][0]['message']['content']
+    attempt = 0
+    while attempt < MAX_RETRIES:
+        try: 
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo-16k",
+                messages=[
+                    {"role": "system", "content": f"Create a title for this article with the following preferences: {preferences}. Keep only title in response, should be 1 to 8 words"},
+                    {"role": "user", "content": article }
+                ],
+                temperature=0.82,
+                max_tokens=20,
+                top_p=.9,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+            output = response['choices'][0]['message']['content']
+            stripped_output = strip_quotes(output)
+            return stripped_output
+        except:
+            openai.api_key = api_keys['OPEN_AI']
+            attempt += 1
+            sleep(5)
+
 
 
 def summarize(article:str, preferences:str) -> str:
-    
-    response = openai.ChatCompletion.create(
-    # model="gpt-3.5-turbo-16k",
-    model="gpt-4",
-    messages=[
-        {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}. Try to keep the content summmary around 250 words and inlcude nothing else in the response. Keep only the news in the summary rather than educating individuals on the basics."},
-        {"role": "user", "content": article }
-    ],
-    temperature=0.82,
-    max_tokens=500,
-    top_p=.9,
-    frequency_penalty=0,
-    presence_penalty=0
-    )
-    return response['choices'][0]['message']['content']
+    attempt = 0
+    while attempt < MAX_RETRIES:
+        try: 
+            response = openai.ChatCompletion.create(
+                # model="gpt-3.5-turbo-16k",
+                model="gpt-3.5-turbo-16k",
+                messages=[
+                    {"role": "system", "content": f"You are a newsletter writer tailoring articles for your user with these preferences: {preferences}. Try to keep the content summmary around 250 words and inlcude nothing else in the response. Keep only the news in the summary rather than educating individuals on the basics."},
+                    {"role": "user", "content": article }
+                ],
+                temperature=0.82,
+                max_tokens=500,
+                top_p=.9,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+        except:
+            openai.api_key = api_keys['OPEN_AI']
+            attempt += 1
+            sleep(5)
+
+    output = response['choices'][0]['message']['content']
+    stripped_output = strip_quotes(output)
+    return stripped_output
         
 
-def create_email_subject(content:list, preferences:str) -> str:
+def create_email_subject(titles:list, preferences:str) -> str:
+    attempt = 0
+    while attempt < MAX_RETRIES:
+        try: 
+            response = openai.ChatCompletion.create(
+                model="gpt-4-1106-preview",
+                messages=[
+                        {"role": "system", "content": f"Create an email subject line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep only the email subject in your respoonse, which should be 1 to 8 words. This should aim to have a high open rate."},
+                        {"role": "user", "content": str(titles)}
+                        ],
+                temperature=0.82,
+                max_tokens=20,
+                top_p=.9,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+            output = response['choices'][0]['message']['content']
+            stripped_output = strip_quotes(output)
+
+            return stripped_output
+        except:
+            openai.api_key = api_keys['OPEN_AI']
+            attempt += 1
+            sleep(5)
+
+def create_section_header(titles:list) -> str:
+    attempt = 0
+    while attempt < MAX_RETRIES:
+        try: 
+            response = openai.ChatCompletion.create(
+                model="gpt-4-1106-preview",
+                messages=[
+                        {"role": "system", "content": f"Create a section header for the following titles. Keep only the section header in the response which should be 1 word. "},
+                        {"role": "user", "content": str(titles)}
+                        ],
+                temperature=0.82,
+                max_tokens=20,
+                top_p=.9,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+            output = response['choices'][0]['message']['content']
+            stripped_output = strip_quotes(output)
+
+            return stripped_output
+        except:
+            openai.api_key = api_keys['OPEN_AI']
+            attempt += 1
+            sleep(5)
     
-    response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo-16k",
-    messages=[
-            {"role": "system", "content": f"Create a sujbect line to catch the users attention and describe the list of articles with the following preferences: {preferences}. Keep only the email subject in your respoonse, which should be 1 to 8 words. This should aim to have a high open rate."},
-            {"role": "user", "content": str(content)}
-            ],
-    temperature=0.82,
-    max_tokens=10,
-    top_p=.9,
-    frequency_penalty=0,
-    presence_penalty=0
-    )
-    return response['choices'][0]['message']['content']
-        
+def create_header_image(titles:list) -> str:
+    attempt = 0
+    while attempt < MAX_RETRIES:
+        try: 
+            client = openai.OpenAI(api_key=api_keys['OPEN_AI'])
+            response = client.images.generate(
+                model="dall-e-3",
+                prompt=f"Create an Image Header for a newsletter with these titles: {str(titles)}",
+                size="1024x1024",
+                quality="standard",
+                n=1,
+            )
+            return response.data[0].url
+        except:
+            openai.api_key = api_keys['OPEN_AI']
+            attempt += 1
+            sleep(5)
+
     
 
 def create_content(article:str, preferences:str) -> dict:
@@ -88,6 +159,22 @@ light_mode = '''
             border: 2px solid white;
             padding: 20px;
             border-radius: 15px;
+        }
+
+        .section {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            border: 2px solid #555;
+        }
+
+        .section img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 10px auto;
         }
 
         .header-box {
@@ -169,33 +256,53 @@ light_mode = '''
 
     </style>'''
 
-def image_to_base64(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+def strip_quotes(text):
+    return text.replace('"', '').replace("'", "")
 
-logo_encoded = image_to_base64('ToastLogo-removebg-preview.png')
 
-def format_passage(content_dict:list) -> str:
+def format_section(passages:list, header:str, header_img_url:str) -> str:
+    section_html = f'''
+    <div class="section">
+        <h2>{strip_quotes(header)}</h2>
+        <img src="{header_img_url}" alt="Section Image">
+        {passages[0]}
+        {passages[1]}
+    </div>
+    '''
+    return section_html
+
+def format_passage(content_dict:dict) -> str:
     html = f'''
-    <h2>{content_dict['title']}</h2>
+    <h3>{content_dict['title']}</h3>
     <div class="article">
         <p>{content_dict['body']}</p>
-        <!-- Omitting the author for now, add it if you have that data -->
     </div>
     '''
     return html
 
 def create_email_html(content:list, preferences:str, style:str) -> dict:
     email = dict()
-    email['subject'] = create_email_subject(content, preferences)
     
     passages = []
+    sections = []
+    titles = []
+    counter = 0
+
     for content_dict in content:
         passage = format_passage(content_dict)
         passages.append(passage)
+        titles.append(content_dict['title'])
+        counter += 1
+        if counter % 2 == 0:
+            header = create_section_header(titles=titles[-2:])
+            image_url = create_header_image(titles=titles[-2:])
+            section = format_section(passages=passages[-2:], header=header, header_img_url=image_url)
+            sections.append(section)
+    
+    
     
     # Combine passages
-    combined_passages = ''.join(passages)
+    combined_sections = ''.join(sections)
     
     # Generate final email HTML
     email_html = f'''
@@ -212,12 +319,13 @@ def create_email_html(content:list, preferences:str, style:str) -> dict:
                     <h1>Here's your Morning Toast</h1>
                 </div>
             </div>
-            {combined_passages}f
+            {combined_sections}
         </div>
     </body>
     </html>
     '''
     
+    email['subject'] = create_email_subject(titles, preferences)
     email['body'] = email_html
 
     return email
