@@ -72,8 +72,7 @@ save_to_s3("encoder-milvus-bucket", embeddings_file, embeddings_file)
 
 
 logging.info("Running the Recommendation System")
-process = subprocess.Popen(['python3.9', 'TokenizedToast/Machine-Learning/Recommendations/main.py'])
-process.wait()
+os.system('python3.9 /home/ec2-user/TokenizedToast/Machine-Learning/Recommendations/main.py')
 
 logging.info(f"Deleting {cleaned_data_fn} from drive to save on storage")
 os.system(f"rm {cleaned_data_fn}")
