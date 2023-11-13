@@ -81,7 +81,6 @@ for output in tqdm(content_archive, total=len(content_archive)):
     articles = output['articles']
     max_date = output['max_date']
     feed = output['feed']
-    print(feed)
     
     rss_feeds.remove(feed)
     
@@ -90,10 +89,11 @@ for output in tqdm(content_archive, total=len(content_archive)):
     rss_feeds.append(feed)
 
     for article in articles:
+        print(article)
         if article == {}:
             continue
-        elif article['date'] == None:
-            article['date'] = int(datetime.now().timestamp())
+        elif article['unixTime'] == None:
+            article['unixTime'] = int(datetime.now().timestamp())
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
         article['partition'] = 0
@@ -104,8 +104,6 @@ for output in tqdm(content_archive, total=len(content_archive)):
 ############## Save Data ##############
 
 ##### Save RSS Feed back to S3
-for item in rss_feeds:
-    item['update'] = 1
 with open(f'/home/ec2-user/{rss_file}', 'w') as file:
     json.dump(rss_feeds, file, indent=4)
 os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
