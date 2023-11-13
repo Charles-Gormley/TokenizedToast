@@ -17,7 +17,7 @@ args = parser.parse_args()
 testing = args.testing
 
 ############## Functions (Move Later) #############
-def create_unique_id(unique_ids) -> int:
+def create_unique_id(unique_ids:set) -> int:
     id = randint(100000000, 999999999)
     while id in unique_ids:
         id = randint(100000000, 999999999)
