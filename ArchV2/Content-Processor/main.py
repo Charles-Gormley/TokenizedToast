@@ -58,6 +58,7 @@ article_id_file = 'unique_article_ids.csv'
 os.system(f"aws s3 cp s3://{bucket}/{article_id_file} /home/ec2-user/{article_id_file}")
 with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
     series = pd.read_csv(file) # Pandas Series
+    print(series)
     unique_ids = set(series['id'].tolist())  # Convert to set
 
 ############## Process Data #############
