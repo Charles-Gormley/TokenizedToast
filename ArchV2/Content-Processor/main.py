@@ -77,6 +77,7 @@ for output in tqdm(content_archive, total=len(content_archive)):
     articles = output['articles']
     max_date = output['max_date']
     feed = output['feed']
+    print(feed)
     
     rss_feeds.remove(feed)
     
