@@ -90,11 +90,11 @@ for output in tqdm(content_archive, total=len(content_archive)):
             continue
         elif article['date'] == None:
             article['date'] = int(datetime.now().timestamp())
-    article['articleID'] = create_unique_id(unique_ids)
-    article["process"] = True
-    logging.debug(f'Feed url Now: {feed}')
-    logging.debug(f"Inserted into: Database: {article}")
-    insert_dynamo(article, 'articleContent')
+        article['articleID'] = create_unique_id(unique_ids)
+        article["process"] = True
+        logging.debug(f'Feed url Now: {feed}')
+        logging.debug(f"Inserted into: Database: {article}")
+        insert_dynamo(article, 'articleContent')
 
 ############## Save Data ##############
 
