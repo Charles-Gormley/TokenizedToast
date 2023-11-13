@@ -65,11 +65,8 @@ article_id_file = 'unique_article_ids.csv'
 os.system(f"aws s3 cp s3://{bucket}/{article_id_file} /home/ec2-user/{article_id_file}")
 with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
     series = pd.read_csv(file) # Pandas Series
-    print(series)
-    print(series.columns)
     series = series.squeeze()
     unique_ids = set(series.tolist())  # Convert to set
-    print(unique_ids)
 
 ############## Process Data #############
 content_lake = []
@@ -79,6 +76,7 @@ for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
         
+FEEDS[:200]
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
