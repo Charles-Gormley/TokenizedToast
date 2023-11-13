@@ -103,9 +103,9 @@ for item in rss_feeds:
     item['update'] = 1
 with open(f'/home/ec2-user/{rss_file}', 'w') as file:
     json.dump(rss_feeds, file, indent=4)
-os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}//{rss_file}")
+os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
 
 ##### Save Article ID csv
 updated_series = pd.Series(list(unique_ids))
 updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
-os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}//{article_id_file}")
+os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
