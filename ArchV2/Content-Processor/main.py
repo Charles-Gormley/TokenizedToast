@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from time import sleep
 from random import randint
@@ -110,26 +110,22 @@ for output in tqdm(content_archive, total=len(content_archive)):
 
         insert_database(article, 'articleContent')
 
-#### Process Article Content
-# Load in articles as pandas dataframe. 
-# Check if any new articles even exist.
-
-# if they do; Load in older article batches also as pandas dataframe. 
-# Remove any articles older than 7 days
-# Merge the two dataframes
-
-
-
 ############## Save Data ##############
 
-# TODO: Save the content-lake dataframe as a json file??! Is it going to complain about some of the article content being json serializable?
-# DELETE DELETe 
-df = pd.DataFrame(content_lake)
-content_lake_dict = df.to_dict(orient="records")
-
-with open(f'/home/ec2-user/content-lake.json', 'w') as file:
-    json.dump(content_lake_dict, file, indent=4)
-os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
+#### Process & Save Article Content
+new_df = pd.DataFrame(content_lake)
+if not new_df.empty: # Check if any new articles even exist.
+    os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
+    with open(f'/home/ec2-user/content-lake.json', 'r') as file:
+        old_content_lake = json.load(file)
+    df = pd.DataFrame(old_content_lake)
+    seven_days_ago = datetime.now() - timedelta(days=7)
+    df = df[df['unixTime'] >= seven_days_ago.timestamp()]
+    concatenated_df = pd.concat([df, new_df], ignore_index=True)
+    content_lake_dict = concatenated_df.to_dict(orient='records')
+    with open(f'/home/ec2-user/content-lake.json', 'w') as file:
+        json.dump(content_lake_dict, file, indent=4)
+    os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 #### Save RSS Feed back to S3
 with open(f'/home/ec2-user/{rss_file}', 'w') as file:
