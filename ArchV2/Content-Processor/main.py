@@ -71,7 +71,7 @@ with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
 for output in tqdm(content_archive, total=len(content_archive)):
-    if output == {} or articles is None:
+    if output == {}:
         continue
 
     articles = output['articles']
