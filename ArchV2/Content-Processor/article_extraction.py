@@ -65,7 +65,7 @@ def extract_feed(rss:dict, output_queue):
 
                 output['articles'] = articles
                 output['max_date'] = max_date
-                output['feed'] = feed
+                output['feed'] = rss
                 
     
     except:
