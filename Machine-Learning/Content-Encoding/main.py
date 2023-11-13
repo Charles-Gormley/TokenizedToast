@@ -69,8 +69,6 @@ logging.info("Saving Encodings to S3")
 save_to_s3("encoder-milvus-bucket", encoded_df_file, encoded_df_file)
 save_to_s3("encoder-milvus-bucket", embeddings_file, embeddings_file)
 
-
-
 logging.info("Running the Recommendation System")
 os.system('python3.9 /home/ec2-user/TokenizedToast/Machine-Learning/Recommendations/main.py')
 
