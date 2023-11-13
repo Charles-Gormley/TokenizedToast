@@ -37,7 +37,7 @@ def worker(feed_url):
     return process_feed(feed_url)
 
 def insert_dynamo(article_dict:dict, table_name:str):
-    cmd = f"aws dynamodb put-item --table-name {table_name} --item '{json.dumps(article_dict)}'"
+    cmd = f"aws dynamodb put-item --table-name {table_name} --item {json.dumps(article_dict)}"
     os.system(cmd)
 
 ############## Load in Data #############
