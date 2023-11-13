@@ -40,13 +40,13 @@ if testing:
 else:
     rss_file = 'rss_feeds_v2.json'
 
-os.system(f"aws s3 cp s3://{bucket}//{rss_file} /home/ec2-user/{rss_file}")
+os.system(f"aws s3 cp s3://{bucket}/{rss_file} /home/ec2-user/{rss_file}")
 with open(f'/home/ec2-user/{rss_file}', 'r') as file:
     rss_feeds = json.load(file)
 
 ##### Load in article IDS
 article_id_file = 'unique_article_ids.csv'
-os.system(f"aws s3 cp s3://{bucket}//{article_id_file} /home/ec2-user/{article_id_file}")
+os.system(f"aws s3 cp s3://{bucket}/{article_id_file} /home/ec2-user/{article_id_file}")
 with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
     series = pd.read_csv(file, squeeze=True) # Pandas Series
     unique_ids = set(series['id'].tolist())  # Convert to set
