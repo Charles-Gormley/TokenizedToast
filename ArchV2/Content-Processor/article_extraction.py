@@ -45,7 +45,7 @@ def extract_feed(rss:dict, output_queue):
         feed = feedparser.parse(feed_url)
 
         for entry in feed['entries']:
-            pub_date =  datetime.strptime(entry['published'], "%a, %d %b %Y %H:%M:%S %z")
+            pub_date =  int(datetime.strptime(entry['published'], "%a, %d %b %Y %H:%M:%S %z").timestamp())
             print("PubDate:", pub_date)
             if pub_date > last_date:
                 print("Passed Pub date check")
