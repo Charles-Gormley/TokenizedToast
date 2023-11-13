@@ -60,6 +60,7 @@ with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
     series = pd.read_csv(file) # Pandas Series
     print(series)
     print(series.columns)
+    series = series.squeeze()
     unique_ids = set(series.tolist())  # Convert to set
     print(unique_ids)
 
