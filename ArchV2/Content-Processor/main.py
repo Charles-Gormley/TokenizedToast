@@ -123,12 +123,12 @@ for output in tqdm(content_archive, total=len(content_archive)):
 ############## Save Data ##############
 
 # TODO: Save the content-lake dataframe as a json file??! Is it going to complain about some of the article content being json serializable?
-# DELETE DELET
+# DELETE DELETe 
 df = pd.DataFrame(content_lake)
-content_lake_json = df.to_json(orient="records")
+content_lake_dict = df.to_dict(orient="records")
 
 with open(f'/home/ec2-user/content-lake.json', 'w') as file:
-    json.dump(content_lake_json, file, indent=4)
+    json.dump(content_lake_dict, file, indent=4)
 os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 #### Save RSS Feed back to S3
