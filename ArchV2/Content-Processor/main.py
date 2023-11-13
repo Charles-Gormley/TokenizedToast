@@ -90,12 +90,15 @@ for output in tqdm(content_archive, total=len(content_archive)):
     articles = output['articles']
     max_date = output['max_date']
     feed = output['feed']
-    
     rss_feeds.remove(feed)
+
+   
     
     feed['dt'] = max_date
     feed['update'] = 0
     rss_feeds.append(feed)
+
+    print(articles)
 
     for article in articles:
         print(article)
