@@ -33,12 +33,12 @@ def process_feed(feed:dict):
     except:
         return None
 
-def extract_feed(feed:dict, output_queue):
+def extract_feed(rss:dict, output_queue):
     articles = []
     output = dict()
 
-    feed_url = feed['u']
-    last_date = feed['dt']
+    feed_url = rss['u']
+    last_date = rss['dt']
     max_date = last_date
 
     try:
@@ -72,7 +72,7 @@ def extract_feed(feed:dict, output_queue):
         logging.debug("Feed Failed %s", feed_url)
         output['articles'] = articles
         output['max_date'] = max_date
-        output['feed'] = feed
+        output['feed'] = rss
 
     output_queue.put(output)
 
