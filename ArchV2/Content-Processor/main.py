@@ -36,9 +36,16 @@ def worker(feed_url):
     logging.info(f'Processing feed {feed_url}')
     return process_feed(feed_url)
 
-def insert_dynamo(article_dict:dict, table_name:str):
-    cmd = f"aws dynamodb put-item --table-name {table_name} --item '{json.dumps(article_dict)}'"
-    os.system(cmd)
+def insert_database(article_dict:dict, table_name:str):
+    '''For right now this is a two pronged s3 solution one for data retrieval with S3 and one for analytics. One day I want to move to a managed Database though.'''
+
+    bucket = 'toast-daily-content'
+    parent = f'retrieval/{article_dict["articleID"]}'
+    with open(f'/home/ec2-user/article-content.json', 'w') as file:
+        json.dump(article_dict, file, indent=4)
+
+    os.system(f"aws s3 cp /home/ec2-user/article-content.json s3://{bucket}/{parent}/article-content.json")
+
 
 ############## Load in Data #############
 bucket = 'rss-data-toast'
@@ -71,6 +78,8 @@ for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
 
+FEEDS = FEEDS[:10]
+
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
@@ -96,19 +105,21 @@ for output in tqdm(content_archive, total=len(content_archive)):
             article['unixTime'] = int(datetime.now().timestamp())
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
-        article['partition'] = 0
         logging.debug(f'Feed url Now: {feed}')
         logging.debug(f"Inserted into: Database: {article}")
-        insert_dynamo(article, 'articleContent')
+        insert_database(article, 'articleContent')
 
 ############## Save Data ##############
+print(rss_feeds)
 
 ##### Save RSS Feed back to S3
-with open(f'/home/ec2-user/{rss_file}', 'w') as file:
-    json.dump(rss_feeds, file, indent=4)
-os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
 
-##### Save Article ID csv
-updated_series = pd.Series(list(unique_ids))
-updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
-os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
+
+# with open(f'/home/ec2-user/{rss_file}', 'w') as file:
+#     json.dump(rss_feeds, file, indent=4)
+# os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
+
+# ##### Save Article ID csv
+# updated_series = pd.Series(list(unique_ids))
+# updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
+# os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
