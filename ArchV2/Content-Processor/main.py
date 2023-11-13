@@ -5,16 +5,24 @@ from time import sleep
 from random import randint
 import multiprocessing
 import argparse
+import logging
 
 from article_extraction import process_feed
 
 import pandas as pd
+from tqdm import tqdm
 
 ############## Argument Parsing #############
 parser = argparse.ArgumentParser(description='RSS Extraction')
 parser.add_argument('--testing', type=bool, default=False, help='boolean flag for testing')
 args = parser.parse_args()
 testing = args.testing
+
+### Set up logging
+logging.basicConfig(level=logging.INFO,
+                    format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+
 
 ############## Functions (Move Later) #############
 def create_unique_id(unique_ids:set) -> int:
@@ -25,6 +33,7 @@ def create_unique_id(unique_ids:set) -> int:
     return id
 
 def worker(feed_url):
+    logging.info(f'Processing feed {feed_url}')
     return process_feed(feed_url)
 
 def insert_dynamo(article_dict:dict, table_name:str):
@@ -61,7 +70,7 @@ for feed in rss_feeds:
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
-for output in content_archive :
+for output in tqdm(content_archive, total=len(content_archive)):
     if output == {} or articles is None:
         continue
 
@@ -82,6 +91,8 @@ for output in content_archive :
             article['date'] = int(datetime.now().timestamp())
     article['articleID'] = create_unique_id(unique_ids)
     article["process"] = True
+    logging.debug(f'Feed url Now: {feed}')
+    logging.debug(f"Inserted into: Database: {article}")
     insert_dynamo(article, 'articleContent')
 
 ############## Save Data ##############
