@@ -78,8 +78,6 @@ for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
 
-FEEDS = FEEDS[:10]
-
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
@@ -98,31 +96,36 @@ for output in tqdm(content_archive, total=len(content_archive)):
     feed['update'] = 0
     rss_feeds.append(feed)
 
-    print(articles)
-
     for article in articles:
-        print(article)
+        
         if article == {}:
             continue
         elif article['unixTime'] == None:
             article['unixTime'] = int(datetime.now().timestamp())
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
-        logging.debug(f'Feed url Now: {feed}')
-        logging.debug(f"Inserted into: Database: {article}")
+        print(article.keys())
+
         insert_database(article, 'articleContent')
+
+#### Process Article Content
+# Load in articles as pandas dataframe. 
+# Check if any new articles even exist
+
+# Load in older article batches also as pandas dataframe. 
+
 
 ############## Save Data ##############
 print(rss_feeds)
 
-##### Save RSS Feed back to S3
 
 
-# with open(f'/home/ec2-user/{rss_file}', 'w') as file:
-#     json.dump(rss_feeds, file, indent=4)
-# os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
+#### Save RSS Feed back to S3
+with open(f'/home/ec2-user/{rss_file}', 'w') as file:
+    json.dump(rss_feeds, file, indent=4)
+os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
 
-# ##### Save Article ID csv
-# updated_series = pd.Series(list(unique_ids))
-# updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
-# os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
+##### Save Article ID csv
+updated_series = pd.Series(list(unique_ids))
+updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
+os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
