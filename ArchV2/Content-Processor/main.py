@@ -72,12 +72,13 @@ with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
     print(unique_ids)
 
 ############## Process Data #############
+content_lake = []
 FEEDS = []
 currentUnixTime = int(datetime.now().timestamp())
 for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
-
+FEEDS = FEEDS[:100]
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
@@ -104,21 +105,31 @@ for output in tqdm(content_archive, total=len(content_archive)):
             article['unixTime'] = int(datetime.now().timestamp())
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
+        content_lake.append(article)
         print(article.keys())
 
         insert_database(article, 'articleContent')
 
 #### Process Article Content
 # Load in articles as pandas dataframe. 
-# Check if any new articles even exist
+# Check if any new articles even exist.
 
-# Load in older article batches also as pandas dataframe. 
+# if they do; Load in older article batches also as pandas dataframe. 
+# Remove any articles older than 7 days
+# Merge the two dataframes
+
 
 
 ############## Save Data ##############
-print(rss_feeds)
 
+# TODO: Save the content-lake dataframe as a json file??! Is it going to complain about some of the article content being json serializable?
+# DELETE DELET
+df = pd.DataFrame(content_lake)
+content_lake_json = df.to_json(orient="records")
 
+with open(f'/home/ec2-user/content-lake.json', 'w') as file:
+    json.dump(content_lake_json, file, indent=4)
+os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 #### Save RSS Feed back to S3
 with open(f'/home/ec2-user/{rss_file}', 'w') as file:
