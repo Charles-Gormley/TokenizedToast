@@ -96,6 +96,7 @@ for output in tqdm(content_archive, total=len(content_archive)):
             article['date'] = int(datetime.now().timestamp())
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
+        article['partition'] = 0
         logging.debug(f'Feed url Now: {feed}')
         logging.debug(f"Inserted into: Database: {article}")
         insert_dynamo(article, 'articleContent')
