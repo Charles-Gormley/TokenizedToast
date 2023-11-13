@@ -38,7 +38,7 @@ def worker(feed_url):
 
 def insert_database(article_dict:dict, table_name:str):
     '''For right now this is a two pronged s3 solution one for data retrieval with S3 and one for analytics. One day I want to move to a managed Database though.'''
-
+    logging.info("Inserting content to s3 retrieval.")
     bucket = 'toast-daily-content'
     parent = f'retrieval/{article_dict["articleID"]}'
     with open(f'/home/ec2-user/article-content.json', 'w') as file:
@@ -95,18 +95,21 @@ for output in tqdm(content_archive, total=len(content_archive)):
     feed['update'] = 0
     rss_feeds.append(feed)
 
+    
     for article in articles:
-        
+        logging.info("Starting Process of Processing new article")
         if article == {}:
             continue
         elif article['unixTime'] == None:
             article['unixTime'] = int(datetime.now().timestamp())
+        logging.info("Processing Article")
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
         content_lake.append(article)
         print(article.keys())
 
         insert_database(article, 'articleContent')
+        logging.info("Finished Processing Article", article['articleID'])
 
 ############## Save Data ##############
 
@@ -123,6 +126,7 @@ if not new_df.empty: # Check if any new articles even exist.
     content_lake_dict = concatenated_df.to_dict(orient='records')
     with open(f'/home/ec2-user/content-lake.json', 'w') as file:
         json.dump(content_lake_dict, file, indent=4)
+    logging.info("Inserting content to s3 for content analytics")
     os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 #### Save RSS Feed back to S3
