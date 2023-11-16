@@ -14,9 +14,9 @@ def process_feed(feed:dict):
 
         thread.daemon = True
         thread.start()
-        logging.debug("Thread Started: %s", feed)
+        logging.debug(f"Thread Started:  {feed}")
         thread.join(timeout=50)
-        logging.debug('Thread Stopped: %s', feed)
+        logging.debug(f"Thread Stopped: {feed}")
         if thread.is_alive():
             thread.terminate()
             logging.debug("Killing Thread: %s", feed)

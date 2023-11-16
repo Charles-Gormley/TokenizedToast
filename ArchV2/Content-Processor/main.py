@@ -110,7 +110,7 @@ for output in tqdm(content_archive, total=len(content_archive)):
         print(article.keys())
 
         insert_database(article, 'articleContent')
-        logging.info("Finished Processing Article", article['articleID'])
+        logging.info(f"Finished Processing Article {article['articleID']}")
 
 ############## Save Data ##############
 
