@@ -15,3 +15,4 @@ Lambdas/Summarize&Send/lambda_function.zip
 rss_feeds_v2.json
 sample_rss_feeds.json
 unique_article_ids.csv
+pytorch_model.bin
