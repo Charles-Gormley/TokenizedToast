@@ -67,6 +67,7 @@ with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
     series = pd.read_csv(file) # Pandas Series
     series = series.squeeze()
     unique_ids = set(series.tolist())  # Convert to set
+    
 
 ############## Process Data #############
 content_lake = []
@@ -75,7 +76,7 @@ currentUnixTime = int(datetime.now().timestamp())
 for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
-        
+      
 FEEDS = FEEDS[:100]
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
