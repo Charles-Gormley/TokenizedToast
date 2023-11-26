@@ -16,3 +16,4 @@ rss_feeds_v2.json
 sample_rss_feeds.json
 unique_article_ids.csv
 pytorch_model.bin
+ArchV2/UserRequestContent/*

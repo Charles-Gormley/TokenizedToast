@@ -130,7 +130,9 @@ if not new_df.empty: # Check if any new articles even exist.
     os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
     with open(f'/home/ec2-user/content-lake.json', 'r') as file:
         old_content_lake = json.load(file)
+    
     df = pd.DataFrame(old_content_lake)
+    print(df.keys())
     seven_days_ago = datetime.now() - timedelta(days=7)
     df = df[df['unixTime'] >= seven_days_ago.timestamp()]
     concatenated_df = pd.concat([df, new_df], ignore_index=True)
