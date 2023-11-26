@@ -12,7 +12,7 @@ rss_file = 'rss_feeds_v2.json'
 while True: # Forever.
     
     # Load
-    os.system(f"aws s3 cp s3://{bucket}//{rss_file} /home/ec2-user/{rss_file}")
+    os.system(f"aws s3 cp s3://{bucket}/{rss_file} /home/ec2-user/{rss_file}")
     with open(f'/home/ec2-user/{rss_file}', 'r') as file:
         rss_feeds = json.load(file)
 
