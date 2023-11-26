@@ -76,8 +76,10 @@ currentUnixTime = int(datetime.now().timestamp())
 for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
-      
-FEEDS = FEEDS[:100]
+
+if testing:
+    FEEDS = FEEDS[:100]    
+
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
 
