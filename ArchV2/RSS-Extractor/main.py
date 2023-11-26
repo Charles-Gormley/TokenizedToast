@@ -8,7 +8,7 @@ from time import sleep
 from feed_checking import process_feed
 
 ############## Config #############
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [INFO] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [INFO] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 # Load in the rss feeds v2
 bucket = 'rss-data-toast'
@@ -36,6 +36,7 @@ while True: # Forever.
         with open(f'/home/ec2-user/{rss_file}', 'w') as file:
             json.dump(rss_feeds, file, indent=4)
         os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}//{rss_file}")
+        logging.info(f"Processed URL: {url}")
 
         sleep(5) # Stopping this from getting killed.
 
