@@ -117,12 +117,12 @@ for output in tqdm(content_archive, total=len(content_archive)):
 ############## Save Data ##############
 
 # First Working time
-# new_df = pd.DataFrame(content_lake)
-# content_lake_dict = new_df.to_dict(orient='records')
-# with open(f'/home/ec2-user/content-lake.json', 'w') as file:
-#     json.dump(content_lake_dict, file, indent=4)
-# logging.info("Inserting content to s3 for content analytics")
-# os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
+new_df = pd.DataFrame(content_lake)
+content_lake_dict = new_df.to_dict(orient='records')
+with open(f'/home/ec2-user/content-lake.json', 'w') as file:
+    json.dump(content_lake_dict, file, indent=4)
+logging.info("Inserting content to s3 for content analytics")
+os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 # #### Process & Save Article Content
 new_df = pd.DataFrame(content_lake)
