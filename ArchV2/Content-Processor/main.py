@@ -132,7 +132,7 @@ if not new_df.empty: # Check if any new articles even exist.
         old_content_lake = json.load(file)
     
     df = pd.DataFrame(old_content_lake)
-    print(df.keys())
+    print(df.head())
     seven_days_ago = datetime.now() - timedelta(days=7)
     df = df[df['unixTime'] >= seven_days_ago.timestamp()]
     concatenated_df = pd.concat([df, new_df], ignore_index=True)
