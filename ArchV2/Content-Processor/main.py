@@ -149,3 +149,8 @@ os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
 updated_series = pd.Series(list(unique_ids))
 updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
 os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
+
+if not testing: # If we are not in testing mode I want the instance to shut off.
+    logging.info("Process Finished Shuting off ec2 instance")
+    instance_id = "i-0ea95298232d8ed99"
+    os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')
