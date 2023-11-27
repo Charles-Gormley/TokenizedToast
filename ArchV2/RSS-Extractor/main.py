@@ -38,7 +38,7 @@ while True: # Forever.
         os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}//{rss_file}")
         logging.info(f"Processed URL: {url}")
 
-        sleep(5) # Stopping this from getting killed.
+        
 
     logging.info("Sleeping")
     sleep(2*60) # TODO: Shutoff then shut back on automated process.
