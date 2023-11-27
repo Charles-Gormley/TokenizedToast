@@ -22,11 +22,20 @@ while True: # Forever.
     logging.info("Downloading Data from S3")
     os.system(f"aws s3 cp s3://{bucket}/{rss_file} /home/ec2-user/{rss_file}")
     with open(f'/home/ec2-user/{rss_file}', 'r') as file:
-        rss_feeds = json.load(file)
+        rss_feeds_unchanging = json.load(file)
 
     # Process
     logging.info("Processing Feeds")
-    for i, rss in enumerate(rss_feeds):
+    for i, _ in enumerate(rss_feeds_unchanging):
+
+        # We gotta do this cause it will just keep updating the same data structure to the content processor if not. If we don't do this it will upload the same rss, the content processor will process the data. but the same data strucutre will be uploaded again acting like, nothing was ever changed.
+        logging.info("Downloading Data from S3")
+        os.system(f"aws s3 cp s3://{bucket}/{rss_file} /home/ec2-user/{rss_file}")
+        with open(f'/home/ec2-user/{rss_file}', 'r') as file:
+            rss_feeds = json.load(file)
+
+        rss = rss_feeds[i]
+
         url = rss['u']
         curUnixTime = rss['dt']
 
