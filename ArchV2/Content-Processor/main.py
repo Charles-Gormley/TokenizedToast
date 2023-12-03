@@ -78,7 +78,7 @@ for feed in rss_feeds:
         FEEDS.append(feed)
 
 if testing:
-    FEEDS = FEEDS[:50]    
+    FEEDS = FEEDS[:100]    
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
@@ -136,7 +136,7 @@ if not new_df.empty: # Check if any new articles even exist.
     
     df = pd.DataFrame(old_content_lake)
     logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
-    
+
     seven_days_ago = datetime.now() - timedelta(days=7)
     df = df[df['unixTime'] >= seven_days_ago.timestamp()]
     concatenated_df = pd.concat([df, new_df], ignore_index=True)
