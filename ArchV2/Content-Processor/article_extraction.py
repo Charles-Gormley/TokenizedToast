@@ -26,7 +26,7 @@ def process_feed(feed: dict):
         try:
             output = output_queue.get_nowait()
             logging.debug("Successful Thread!: %s", feed)
-            print("Output Max Date " + output['max_date'])
+            print("Output Max Date " + str(output['max_date']))
             output["articles"]
             return output
         except:
