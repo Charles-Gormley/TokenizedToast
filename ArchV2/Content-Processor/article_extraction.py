@@ -29,7 +29,7 @@ def process_feed(feed: dict):
             logging.debug(f"Output: {output}")
             output["articles"]
             return output
-        except queue.Empty:
+        except:
             logging.debug("Queue is empty, no output generated.")
 
     return None
