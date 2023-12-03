@@ -26,7 +26,7 @@ def process_feed(feed: dict):
         try:
             output = output_queue.get_nowait()
             logging.debug("Successful Thread!: %s", feed)
-            print("Outpute Max Date " + output['max_date'])
+            print("Output Max Date " + output['max_date'])
             output["articles"]
             return output
         except:
@@ -71,7 +71,7 @@ def extract_feed(rss:dict, output_queue, stop_thread):
                     max_date = pub_date
                 articles.append(article)
 
-                
+                logging.debug(article['title'])
                 output['articles'] = articles
                 output['max_date'] = max_date
                 output['feed'] = rss

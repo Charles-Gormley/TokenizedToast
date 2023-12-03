@@ -75,11 +75,11 @@ for feed in rss_feeds:
         FEEDS.append(feed)
 
 if testing:
-    FEEDS = FEEDS[:100]    
+    FEEDS = FEEDS[:40]    
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
-    
+
 logging.debug(f"Content Archive: {content_archive}")
 for output in tqdm(content_archive, total=len(content_archive)):
     if output == {} or output == None:
