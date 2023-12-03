@@ -7,32 +7,31 @@ import queue
 import threading
 import logging
 
-def process_feed(feed:dict):
+def process_feed(feed: dict):
     output_queue = queue.Queue()
-    thread = threading.Thread(target=extract_feed, args=(feed, output_queue,))
-    try:
+    stop_thread = threading.Event()  # Flag to signal the thread to stop
 
-        thread.daemon = True
-        thread.start()
-        logging.debug(f"Thread Started:  {feed}")
-        thread.join(timeout=50)
-        logging.debug(f"Thread Stopped: {feed}")
-        if thread.is_alive():
-            thread.terminate()
-            logging.debug("Killing Thread: %s", feed)
-            thread.join()
-        else:
-            output = output_queue.get()
+    # Define the thread
+    thread = threading.Thread(target=extract_feed, args=(feed, output_queue, stop_thread,))
+    thread.daemon = True
+    thread.start()
+    logging.debug(f"Thread Started: {feed}")
+
+    thread.join(timeout=50)
+    if thread.is_alive():
+        stop_thread.set()  # Signal the thread to stop
+        logging.debug(f"Killing Thread: {feed}")
+        thread.join()  # Ensure thread has stopped
+    else:
+        try:
+            output = output_queue.get_nowait()
             logging.debug("Successful Thread!: %s", feed)
-    except:
-        pass
+            if 'articles' in output:
+                return output
+        except queue.Empty:
+            logging.debug("Queue is empty, no output generated.")
 
-    try:
-        logging.debug(f"Output: {output}") 
-        output['articles'] # Testing existance of articles
-        return output
-    except:
-        return None
+    return None
 
 def extract_feed(rss:dict, output_queue):
     articles = []
