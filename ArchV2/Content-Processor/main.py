@@ -129,6 +129,8 @@ for output in tqdm(content_archive, total=len(content_archive)):
 new_df = pd.DataFrame(content_lake)
 
 logging.debug(f"New Dataframe Content Lake Head: {new_df.head()}")
+logging.debug(f"Length of new dataframe: {len(new_df)}")
+
 if not new_df.empty: # Check if any new articles even exist.
     os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
     with open(f'/home/ec2-user/content-lake.json', 'r') as file:
@@ -136,11 +138,14 @@ if not new_df.empty: # Check if any new articles even exist.
     
     df = pd.DataFrame(old_content_lake)
     logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
+    logging.debug(f"Length of old dataframe: {len(df)}")
 
     seven_days_ago = datetime.now() - timedelta(days=7)
     df = df[df['unixTime'] >= seven_days_ago.timestamp()]
     concatenated_df = pd.concat([df, new_df], ignore_index=True)
+    logging.debug(f"Length of Concatenated Dataframe: {len(concatenated_df)}")
     content_lake_dict = concatenated_df.to_dict(orient='records')
+    logging.debug(f"Length of Concatenated Dictionary: {len(content_lake_dict)}")
 
     with open(f'/home/ec2-user/content-lake.json', 'w') as file:
         json.dump(content_lake_dict, file, indent=4)
