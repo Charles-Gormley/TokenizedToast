@@ -51,10 +51,7 @@ def insert_database(article_dict:dict, table_name:str):
 bucket = 'rss-data-toast'
 
 ##### RSS Feeds
-if testing:
-    rss_file = 'sample_rss_feeds.json'
-else:
-    rss_file = 'rss_feeds_v2.json'
+rss_file = 'rss_feeds_v2.json'
 
 os.system(f"aws s3 cp s3://{bucket}/{rss_file} /home/ec2-user/{rss_file}")
 with open(f'/home/ec2-user/{rss_file}', 'r') as file:
@@ -78,7 +75,7 @@ for feed in rss_feeds:
         FEEDS.append(feed)
 
 if testing:
-    FEEDS = FEEDS[:500]    
+    FEEDS = FEEDS[:100]    
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
