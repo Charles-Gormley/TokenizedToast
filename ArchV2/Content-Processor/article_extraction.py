@@ -33,7 +33,7 @@ def process_feed(feed: dict):
 
     return None
 
-def extract_feed(rss:dict, output_queue):
+def extract_feed(rss:dict, output_queue, stop_thread):
     articles = []
     output = dict()
 
