@@ -27,8 +27,9 @@ def process_feed(feed:dict):
     except:
         pass
 
-    try: 
-        output['articles']
+    try:
+        logging.debug(f"Output: {output}") 
+        output['articles'] # Testing existance of articles
         return output
     except:
         return None
