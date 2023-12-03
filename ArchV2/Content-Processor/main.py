@@ -75,7 +75,7 @@ for feed in rss_feeds:
         FEEDS.append(feed)
 
 if testing:
-    FEEDS = FEEDS[:80]    
+    FEEDS = FEEDS[:101]    
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)

@@ -71,7 +71,7 @@ def extract_feed(rss:dict, output_queue, stop_thread):
                     max_date = pub_date
                 articles.append(article)
 
-                logging.debug(article['title'])
+                logging.debug(f"{title}")
                 output['articles'] = articles
                 output['max_date'] = max_date
                 output['feed'] = rss
