@@ -39,6 +39,12 @@ def extract_feed(rss:dict, output_queue):
 
     feed_url = rss['u']
     last_date = rss['dt']
+    try: 
+        issues = rss['issues']
+    except:
+        rss['issues'] = 0 # This is a new feed.
+        issues = rss['issues']
+
     max_date = last_date
 
     try:
@@ -72,6 +78,7 @@ def extract_feed(rss:dict, output_queue):
         logging.debug("Feed Failed %s", feed_url)
         output['articles'] = articles
         output['max_date'] = max_date
+        rss['issues'] += 1
         output['feed'] = rss
 
     output_queue.put(output)

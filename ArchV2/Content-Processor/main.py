@@ -78,7 +78,7 @@ for feed in rss_feeds:
         FEEDS.append(feed)
 
 if testing:
-    FEEDS = FEEDS[:100]    
+    FEEDS = FEEDS[:50]    
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
@@ -132,13 +132,15 @@ if not new_df.empty: # Check if any new articles even exist.
         old_content_lake = json.load(file)
     
     df = pd.DataFrame(old_content_lake)
-    print(df.head())
+    
     seven_days_ago = datetime.now() - timedelta(days=7)
     df = df[df['unixTime'] >= seven_days_ago.timestamp()]
     concatenated_df = pd.concat([df, new_df], ignore_index=True)
     content_lake_dict = concatenated_df.to_dict(orient='records')
+
     with open(f'/home/ec2-user/content-lake.json', 'w') as file:
         json.dump(content_lake_dict, file, indent=4)
+    
     logging.info("Inserting content to s3 for content analytics")
     os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
