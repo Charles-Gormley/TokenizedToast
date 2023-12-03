@@ -82,10 +82,11 @@ if testing:
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
-
+logging.debug(f"Content Archive: {content_archive}")
 for output in tqdm(content_archive, total=len(content_archive)):
     if output == {} or output == None:
         continue
+
 
     articles = output['articles']
     max_date = output['max_date']
@@ -126,12 +127,15 @@ for output in tqdm(content_archive, total=len(content_archive)):
 
 # #### Process & Save Article Content
 new_df = pd.DataFrame(content_lake)
+
+logging.debug(f"New Dataframe Content Lake Head: {new_df.head()}")
 if not new_df.empty: # Check if any new articles even exist.
     os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
     with open(f'/home/ec2-user/content-lake.json', 'r') as file:
         old_content_lake = json.load(file)
     
     df = pd.DataFrame(old_content_lake)
+    logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
     
     seven_days_ago = datetime.now() - timedelta(days=7)
     df = df[df['unixTime'] >= seven_days_ago.timestamp()]
