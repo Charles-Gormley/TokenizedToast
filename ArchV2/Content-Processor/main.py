@@ -79,6 +79,7 @@ if testing:
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
+    
 logging.debug(f"Content Archive: {content_archive}")
 for output in tqdm(content_archive, total=len(content_archive)):
     if output == {} or output == None:

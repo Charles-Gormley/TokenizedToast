@@ -22,8 +22,8 @@ def process_feed(feed:dict):
             logging.debug("Killing Thread: %s", feed)
             thread.join()
         else:
-            logging.debug("Successful Thread: %s", feed)
             output = output_queue.get()
+            logging.debug("Successful Thread!: %s", feed)
     except:
         pass
 
