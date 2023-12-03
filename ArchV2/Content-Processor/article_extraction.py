@@ -26,8 +26,9 @@ def process_feed(feed: dict):
         try:
             output = output_queue.get_nowait()
             logging.debug("Successful Thread!: %s", feed)
-            if 'articles' in output:
-                return output
+            logging.debug(f"Output: {output}")
+            output["articles"]
+            return output
         except queue.Empty:
             logging.debug("Queue is empty, no output generated.")
 
@@ -69,6 +70,7 @@ def extract_feed(rss:dict, output_queue, stop_thread):
                     max_date = pub_date
                 articles.append(article)
 
+                logging.debug(f"Output of Feed{feed}: {output}")
                 output['articles'] = articles
                 output['max_date'] = max_date
                 output['feed'] = rss
