@@ -7,6 +7,7 @@ from encoder import encode_dataframe_column
 from datetime import datetime, timedelta
 import logging
 import argparse
+import sys
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
@@ -45,6 +46,7 @@ if encoded_df.empty:
     logging.info("Encoding Proces Finished Exiting Instance:")
     instance_id = "i-061dff9fc11bb2250"
     os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')
+    sys.exit()
 
 ######### Saving New Encodings  #########
 try: 
