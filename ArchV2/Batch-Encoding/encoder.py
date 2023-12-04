@@ -92,3 +92,6 @@ def encode_dataframe_column(dataframe:pd.DataFrame, column_name:str) -> pd.DataF
     logging.info(f"Finished encoding dataframe column '{column_name}'")
     
     return encoded_df
+
+if __name__ == "__main__":
+    logging.info("if we got here the encodings passed!")
