@@ -49,7 +49,7 @@ try:
 
     new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
     new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
-    new_encoded_tensor = torch.tensor(encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values)
+    new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
 
     concatenated_embeddings = {
         'articleID': torch.cat([old_data_filtered['articleID'], new_article_id_tensor]),
@@ -60,11 +60,9 @@ try:
 except:
     logging.info("First time using embeddings or file not found.")
     embeddings = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
-    logging.info(embeddings)
-    logging.info(type(embeddings))
     concatenated_embeddings = {
         'articleID': torch.tensor(encoded_df['articleID'].values),
-        'tensor': torch.tensor(embeddings),
+        'tensor': embeddings,
         'unixTime': torch.tensor(encoded_df['unixTime'].values)
     }
 
