@@ -60,6 +60,7 @@ try:
 except:
     logging.info("First time using embeddings or file not found.")
     embeddings = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
+    logging.info(embeddings)
     logging.info(type(embeddings))
     concatenated_embeddings = {
         'articleID': torch.tensor(encoded_df['articleID'].values),
