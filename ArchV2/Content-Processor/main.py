@@ -114,14 +114,6 @@ for output in tqdm(content_archive, total=len(content_archive)):
 
 ############## Save Data ##############
 
-# First Working time
-# new_df = pd.DataFrame(content_lake)
-# content_lake_dict = new_df.to_dict(orient='records')
-# with open(f'/home/ec2-user/content-lake.json', 'w') as file:
-#     json.dump(content_lake_dict, file, indent=4)
-# logging.info("Inserting content to s3 for content analytics")
-# os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
-
 # #### Process & Save Article Content
 new_df = pd.DataFrame(content_lake)
 
@@ -168,6 +160,7 @@ updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=T
 os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
 
 if not testing: # If we are not in testing mode I want the instance to shut off.
+    logging.info("Invoking Lambda")
     os.system('aws lambda invoke --function-name "StartEncodingJob" lambda_output.txt') # Trigger Encoding Lambda.
 
     logging.info("Process Finished Shuting off ec2 instance")

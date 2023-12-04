@@ -6,7 +6,7 @@ import logging
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
