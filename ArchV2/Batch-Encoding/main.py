@@ -6,12 +6,16 @@ import subprocess
 from encoder import encode_dataframe_column
 from datetime import datetime, timedelta
 import logging
+import argparse
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-testing = False
+parser = argparse.ArgumentParser(description='RSS Extraction')
+parser.add_argument('--testing', type=bool, default=False, help='boolean flag for testing')
+args = parser.parse_args()
+testing = args.testing
 
 bucket = "toast-encodings"
 encoded_df_file = "encoded_df.feather"
