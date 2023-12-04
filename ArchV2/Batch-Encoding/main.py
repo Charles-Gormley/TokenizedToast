@@ -57,7 +57,8 @@ try:
         'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
     }
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
-except:
+except Exception as e:
+    logging.info(e)
     logging.info("First time using embeddings or file not found.")
     embeddings = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
     concatenated_embeddings = {
