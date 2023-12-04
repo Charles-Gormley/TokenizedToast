@@ -40,6 +40,7 @@ try:
 
     # Filter out data older than 7 days
     seven_days_ago = datetime.now() - timedelta(days=7)
+    print(old_embeddings['unixTime'])
     old_data_filtered = {k: v[old_embeddings['unixTime'] >= seven_days_ago.timestamp()] for k, v in old_embeddings.items()}
 
     new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
