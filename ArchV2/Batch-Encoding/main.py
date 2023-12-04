@@ -41,7 +41,7 @@ try:
     # Download the existing embeddings file from S3
     os.system(f"aws s3 cp s3://{bucket}/{embeddings_file} /home/ec2-user/{embeddings_file}")
     old_embeddings = torch.load(f"/home/ec2-user/{embeddings_file}")
-    old_embeddings["unixTime"]
+    
 
     # Filter out data older than 7 days
     seven_days_ago = datetime.now() - timedelta(days=7)
@@ -59,6 +59,7 @@ try:
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
 except:
     logging.info("First time using embeddings or file not found.")
+
     concatenated_embeddings = {
         'articleID': torch.tensor(encoded_df['articleID'].values),
         'tensor': torch.tensor(encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values),
