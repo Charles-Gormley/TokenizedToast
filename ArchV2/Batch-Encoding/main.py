@@ -25,7 +25,10 @@ with open(f'/home/ec2-user/content-lake.json', 'r') as file:
 
 
 # TODO: Split dataframe into one that only has data that needs to processed
-encoded_list = encode_dataframe_column(df, "content")
+process_df = df[df["to_encode"] == True]
+encoded_df = encode_dataframe_column(process_df, "content")
+
+# Load in older dataframe
 
 # Concatenate dataframe.
 

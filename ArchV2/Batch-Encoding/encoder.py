@@ -16,12 +16,6 @@ tokenizer = BertTokenizer.from_pretrained(f"{cache_dir}tokenizer/")
 model = BertModel.from_pretrained(f"{cache_dir}model/")
 model.eval()
 
-def load_df(df_path) -> pd.DataFrame:
-    df = pd.read_pickle(df_path)
-    df.dropna(how="all", inplace=True)
-    df.drop_duplicates(subset="content", inplace=True)
-    return df
-
 def encode_and_pool(text):
     logging.debug("Starting encoding and pooling")
     # Tokenize the text
@@ -77,13 +71,13 @@ def process_row(row, column_name):
         "tensor": encode_and_pool(row[column_name])
     }
 
-def encode_dataframe_column(dataframe:pd.DataFrame, column_name:str) ->:
+def encode_dataframe_column(dataframe:pd.DataFrame, column_name:str) -> pd.DataFrame:
     logging.info(f"Starting encoding dataframe column '{column_name}'")
     
     # Check if the column exists in the dataframe
     if column_name not in dataframe.columns:
         logging.error(f"The column '{column_name}' is not in the dataframe.")
-        return
+        return None
     
     # Create a new dataframe with a unique id
     dataframe_with_id = dataframe.reset_index()
