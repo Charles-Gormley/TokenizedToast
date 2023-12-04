@@ -39,7 +39,7 @@ if testing:
     process_df = process_df.head()
 
 encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
-
+print(encoded_df)
 ######### Saving New Encodings  #########
 try: 
     # Download the existing embeddings file from S3
