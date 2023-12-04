@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 cache_dir = "/home/ec2-user/model_cache/"
 tokenizer = BertTokenizer.from_pretrained(f"{cache_dir}tokenizer/")
 model = BertModel.from_pretrained(f"{cache_dir}model/")
-model.eval()
+
 
 def encode_and_pool(text):
     logging.debug("Starting encoding and pooling")
@@ -95,3 +95,4 @@ def encode_dataframe_column(dataframe:pd.DataFrame, column_name:str) -> pd.DataF
 
 if __name__ == "__main__":
     logging.info("if we got here the encodings passed!")
+    model.eval()
