@@ -32,22 +32,38 @@ process_df = content_df[content_df["to_encode"] == True]
 encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
 
 
-######### Saving New Encoding Dataframe #########
+######### Saving New Encodings  #########
 try: 
-    os.system(f"aws s3 cp s3://{bucket}/{encoded_df_file} /home/ec2-user/{encoded_df_file}")
-    old_encoded_df = pd.read_feather(f"/home/ec2-user/{encoded_df_file}")
-    seven_days_ago = datetime.now() - timedelta(days=7) 
-    old_encoded_df = old_encoded_df[old_encoded_df['unixTime'] >= seven_days_ago.timestamp()] # Get rid of older encodings
+    # Download the existing embeddings file from S3
+    os.system(f"aws s3 cp s3://{bucket}/{embeddings_file} /home/ec2-user/{embeddings_file}")
+    old_embeddings = torch.load(f"/home/ec2-user/{embeddings_file}")
 
-    concatenated_df = pd.concat([encoded_df, old_encoded_df], ignore_index=True)
-    logging.info("Not the first time this is being loaded in.")
+    # Filter out data older than 7 days
+    seven_days_ago = datetime.now() - timedelta(days=7)
+    old_data_filtered = {k: v[old_embeddings['unixTime'] >= seven_days_ago.timestamp()] for k, v in old_embeddings.items()}
+
+    new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
+    new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
+    new_encoded_tensor = torch.tensor(encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values)
+
+    concatenated_embeddings = {
+        'articleID': torch.cat([old_data_filtered['articleID'], new_article_id_tensor]),
+        'tensor': torch.cat([old_data_filtered['tensor'], new_encoded_tensor]),
+        'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
+    }
+    logging.info("Existing embeddings loaded and concatenated with new embeddings.")
 except Exception as e:
     logging.debug(f"{e}")
-    logging.info("First Time Using Encodings")
-    concatenated_df = encoded_df
+    logging.info("First time using embeddings or file not found.")
+    concatenated_embeddings = {
+        'articleID': torch.tensor(encoded_df['articleID'].values),
+        'tensor': torch.tensor(encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values),
+        'unixTime': torch.tensor(encoded_df['unixTime'].values)
+    }
 
-concatenated_df.to_feather(f"/home/ec2-user/{encoded_df_file}") # Save Encoded Dataframe.
-os.system(f"aws s3 cp /home/ec2-user/{encoded_df_file} s3://{bucket}/{encoded_df_file}")
+torch.save(concatenated_embeddings, f"home/ec2-user/{embeddings_file}")
+os.system(f"aws s3 cp /home/ec2-user/{embeddings_file} s3://{bucket}/{embeddings_file}")
+
 
 
 ######### Saving Content #########

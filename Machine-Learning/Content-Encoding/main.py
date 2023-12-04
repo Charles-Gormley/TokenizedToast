@@ -58,7 +58,7 @@ logging.info("Saving encoded file")
 id_tensor = torch.tensor(encoded_df['id'].values)
 encoded_tensor = encoded_df['tensor'].values
 
-torch.save({'ID':id_tensor, 'tensor':encoded_tensor}, embeddings_file)
+torch.save({'articID':id_tensor, 'tensor':encoded_tensor}, embeddings_file)
 
 encoded_df = encoded_df.drop('tensor', axis=1)
 logging.info("Saving encoded DataFrame to file")
