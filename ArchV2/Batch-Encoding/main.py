@@ -39,7 +39,13 @@ if testing:
     process_df = process_df.head()
 
 encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
-print(encoded_df)
+
+if encoded_df.empty:
+    ######### Exiting Script #########
+    logging.info("Encoding Proces Finished Exiting Instance:")
+    instance_id = "i-061dff9fc11bb2250"
+    os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')
+
 ######### Saving New Encodings  #########
 try: 
     # Download the existing embeddings file from S3
