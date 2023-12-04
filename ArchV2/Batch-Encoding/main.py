@@ -59,10 +59,10 @@ try:
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
 except:
     logging.info("First time using embeddings or file not found.")
-
+    embeddings = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
     concatenated_embeddings = {
         'articleID': torch.tensor(encoded_df['articleID'].values),
-        'tensor': torch.tensor(encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values),
+        'tensor': torch.tensor(embeddings),
         'unixTime': torch.tensor(encoded_df['unixTime'].values)
     }
 
