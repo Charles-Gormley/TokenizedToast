@@ -19,7 +19,7 @@ def process_feed(feed: dict):
 
     thread.join(timeout=90)
     if thread.is_alive():
-        stop_thread.set()  # Signal the thread to stop
+        thread.terminate() # Signal the thread to stop
         logging.debug(f"Killing Thread: {feed}")
         thread.join()  # Ensure thread has stopped
     else:
