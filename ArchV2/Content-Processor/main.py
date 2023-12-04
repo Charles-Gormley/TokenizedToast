@@ -112,11 +112,12 @@ for output in tqdm(content_archive, total=len(content_archive)):
         insert_database(article, 'articleContent')
         logging.info(f"Finished Processing Article {article['articleID']}")
 
+logging.info(f"Amount of Articles Processed: {len(content_lake)}")
 ############## Save Data ##############
 
 # #### Process & Save Article Content
 new_df = pd.DataFrame(content_lake)
-
+logging.info(f"Length of Content Lake: {len(content_lake)}")
 logging.debug(f"New Dataframe Content Lake Head: {new_df.head()}")
 logging.debug(f"Length of new dataframe: {len(new_df)}")
 
