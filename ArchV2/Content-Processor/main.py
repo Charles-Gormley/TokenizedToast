@@ -128,12 +128,19 @@ new_df = pd.DataFrame(content_lake)
 logging.debug(f"New Dataframe Content Lake Head: {new_df.head()}")
 logging.debug(f"Length of new dataframe: {len(new_df)}")
 
+new_df["to_encode"] = True
+
 if not new_df.empty: # Check if any new articles even exist.
     os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
     with open(f'/home/ec2-user/content-lake.json', 'r') as file:
         old_content_lake = json.load(file)
     
     df = pd.DataFrame(old_content_lake)
+    try:
+        print(df["to_encode"])
+    except:
+        df["to_encode"] = True # This column does not exists.
+
     logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
     logging.debug(f"Length of old dataframe: {len(df)}")
 
@@ -161,6 +168,8 @@ updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=T
 os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
 
 if not testing: # If we are not in testing mode I want the instance to shut off.
+    os.system('aws lambda invoke --function-name "StartEncodingJob" lambda_output.txt') # Trigger Encoding Lambda.
+
     logging.info("Process Finished Shuting off ec2 instance")
     instance_id = "i-0ea95298232d8ed99"
     os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')

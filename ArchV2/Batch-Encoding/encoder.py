@@ -66,9 +66,10 @@ def encode_and_pool(text):
 # Assuming the 'encode_and_pool' function is defined elsewhere
 def process_row(row, column_name):
     return {
-        "id": row['index'],
         "text": row[column_name],
-        "tensor": encode_and_pool(row[column_name])
+        "tensor": encode_and_pool(row[column_name]),
+        "articleID": row["articleID"],
+        "unixTime": row["unixTime"]
     }
 
 def encode_dataframe_column(dataframe:pd.DataFrame, column_name:str) -> pd.DataFrame:
