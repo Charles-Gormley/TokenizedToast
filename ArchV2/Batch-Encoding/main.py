@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-testing = True
+testing = False
 
 bucket = "toast-encodings"
 encoded_df_file = "encoded_df.feather"
@@ -66,7 +66,7 @@ except:
         'unixTime': torch.tensor(encoded_df['unixTime'].values)
     }
 
-torch.save(concatenated_embeddings, f"home/ec2-user/{embeddings_file}")
+torch.save(concatenated_embeddings, f"/home/ec2-user/{embeddings_file}")
 os.system(f"aws s3 cp /home/ec2-user/{embeddings_file} s3://{bucket}/{embeddings_file}")
 
 
