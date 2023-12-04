@@ -11,6 +11,8 @@ logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
+testing = True
+
 bucket = "toast-encodings"
 encoded_df_file = "encoded_df.feather"
 embeddings_file = 'embeddings.pth'
@@ -29,8 +31,10 @@ logging.debug(f"Length of old dataframe: {len(content_df)}")
 ######### Encoding Content #########
 # Split dataframe into one that only has data that needs to processed
 process_df = content_df[content_df["to_encode"] == True]
-encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
+if testing:
+    process_df = process_df.head()
 
+encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
 
 ######### Saving New Encodings  #########
 try: 
@@ -53,8 +57,7 @@ try:
         'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
     }
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
-except Exception as e:
-    logging.debug(f"{e}")
+except:
     logging.info("First time using embeddings or file not found.")
     concatenated_embeddings = {
         'articleID': torch.tensor(encoded_df['articleID'].values),
