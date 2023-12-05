@@ -105,9 +105,10 @@ for output in tqdm(content_archive, total=len(content_archive)):
             continue
         elif article['unixTime'] == None:
             article['unixTime'] = int(datetime.now().timestamp())
-        logging.debug(f"Starting Process of Processing new article {article['articleID']}")
+        
         logging.debug("Processing Article")
         article['articleID'] = create_unique_id(unique_ids)
+        logging.debug(f"Starting Process of Processing new article {article['articleID']}")
         article["process"] = True
         content_lake.append(article)
 
