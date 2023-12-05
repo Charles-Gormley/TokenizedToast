@@ -61,7 +61,7 @@ with open(f'/home/ec2-user/{rss_file}', 'r') as file:
 rss_feeds_df = pd.DataFrame(rss_feeds)
 rss_feeds_df = rss_feeds_df.drop_duplicates()
 rss_feeds = rss_feeds_df.to_dict('records')
-
+logging.info(f"Amount of rss_feeds after processing: {len(rss_feeds)}")
 ##### Load in article IDS
 article_id_file = 'unique_article_ids.csv'
 os.system(f"aws s3 cp s3://{bucket}/{article_id_file} /home/ec2-user/{article_id_file}")
@@ -127,22 +127,27 @@ logging.debug(f"Length of new dataframe: {len(new_df)}")
 new_df["to_encode"] = True
 
 if not new_df.empty: # Check if any new articles even exist.
-    os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
-    with open(f'/home/ec2-user/content-lake.json', 'r') as file:
-        old_content_lake = json.load(file)
-    
-    df = pd.DataFrame(old_content_lake)
-    try:
-        print(df["to_encode"])
+
+    try: # Incase the content lake is empty
+        os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
+        with open(f'/home/ec2-user/content-lake.json', 'r') as file:
+            old_content_lake = json.load(file)
+        
+        df = pd.DataFrame(old_content_lake)
+        try:
+            print(df["to_encode"])
+        except:
+            df["to_encode"] = True # This column does not exists.
+
+        logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
+        logging.debug(f"Length of old dataframe: {len(df)}")
+
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        df = df[df['unixTime'] >= seven_days_ago.timestamp()]
+        concatenated_df = pd.concat([df, new_df], ignore_index=True)
     except:
-        df["to_encode"] = True # This column does not exists.
-
-    logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
-    logging.debug(f"Length of old dataframe: {len(df)}")
-
-    seven_days_ago = datetime.now() - timedelta(days=7)
-    df = df[df['unixTime'] >= seven_days_ago.timestamp()]
-    concatenated_df = pd.concat([df, new_df], ignore_index=True)
+        concatenated_df = new_df
+    
     logging.debug(f"Length of Concatenated Dataframe: {len(concatenated_df)}")
     content_lake_dict = concatenated_df.to_dict(orient='records')
     logging.debug(f"Length of Concatenated Dictionary: {len(content_lake_dict)}")
