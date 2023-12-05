@@ -57,8 +57,11 @@ os.system(f"aws s3 cp s3://{bucket}/{rss_file} /home/ec2-user/{rss_file}")
 with open(f'/home/ec2-user/{rss_file}', 'r') as file:
     rss_feeds = json.load(file)
 
-rss_feeds = list(set(rss_feeds)) # Removing Duplicates if they exist.
-logging.info(f"Amount of rss_feeds before processing: {len(rss_feeds)}")
+# Removing Duplicates if they exist.
+rss_feeds_df = pd.DataFrame(rss_feeds)
+rss_feeds_df = rss_feeds_df.drop_duplicates()
+rss_feeds = rss_feeds_df.to_dict('records')
+
 ##### Load in article IDS
 article_id_file = 'unique_article_ids.csv'
 os.system(f"aws s3 cp s3://{bucket}/{article_id_file} /home/ec2-user/{article_id_file}")
@@ -71,7 +74,6 @@ with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
 ############## Process Data #############
 content_lake = []
 FEEDS = []
-currentUnixTime = int(datetime.now().timestamp())
 for feed in rss_feeds:
     if feed['update']:
         FEEDS.append(feed)
@@ -152,7 +154,10 @@ if not new_df.empty: # Check if any new articles even exist.
     os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 # #### Save RSS Feed back to S3
-rss_feeds = list(set(rss_feeds)) # Removing Duplicates if they exist.
+# Removing Duplicates if they exist.
+rss_feeds_df = pd.DataFrame(rss_feeds)
+rss_feeds_df = rss_feeds_df.drop_duplicates()
+rss_feeds = rss_feeds_df.to_dict('records')
 with open(f'/home/ec2-user/{rss_file}', 'w') as file:
     json.dump(rss_feeds, file, indent=4)
 os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
