@@ -93,7 +93,7 @@ for output in tqdm(content_archive, total=len(content_archive)):
    
     
     feed['dt'] = max_date
-    feed['update'] = 0
+    feed['update'] = 1
     rss_feeds.append(feed)
 
     
