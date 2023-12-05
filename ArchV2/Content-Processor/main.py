@@ -75,7 +75,7 @@ for feed in rss_feeds:
         FEEDS.append(feed)
 
 if testing:
-    FEEDS = FEEDS[:101]    
+    FEEDS = FEEDS[:90]    
 
 with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
     content_archive = pool.map(worker, FEEDS)
@@ -90,8 +90,6 @@ for output in tqdm(content_archive, total=len(content_archive)):
     feed = output['feed']
     rss_feeds.remove(feed)
 
-   
-    
     feed['dt'] = max_date
     feed['update'] = 0
     rss_feeds.append(feed)
