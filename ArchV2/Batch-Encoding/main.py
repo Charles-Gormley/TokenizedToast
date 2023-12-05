@@ -69,6 +69,8 @@ try:
         'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
     }
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
+    torch.save(concatenated_embeddings, f"/home/ec2-user/{embeddings_file}")
+    os.system(f"aws s3 cp /home/ec2-user/{embeddings_file} s3://{bucket}/{embeddings_file}")
 except Exception as e:
     logging.info(e)
     logging.info("First time using embeddings or file not found.")
@@ -78,9 +80,8 @@ except Exception as e:
         'tensor': embeddings,
         'unixTime': torch.tensor(encoded_df['unixTime'].values)
     }
-
-torch.save(concatenated_embeddings, f"/home/ec2-user/{embeddings_file}")
-os.system(f"aws s3 cp /home/ec2-user/{embeddings_file} s3://{bucket}/{embeddings_file}")
+    torch.save(concatenated_embeddings, f"/home/ec2-user/{embeddings_file}")
+    os.system(f"aws s3 cp /home/ec2-user/{embeddings_file} s3://{bucket}/{embeddings_file}")
 
 
 
