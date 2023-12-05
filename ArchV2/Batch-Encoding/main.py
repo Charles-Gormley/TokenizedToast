@@ -98,6 +98,7 @@ os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/
 
 
 ######### Exiting Script #########
-logging.info("Encoding Proces Finished Exiting Instance:")
-instance_id = "i-061dff9fc11bb2250"
-os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')
+if not testing:
+    logging.info("Encoding Proces Finished Exiting Instance:")
+    instance_id = "i-061dff9fc11bb2250"
+    os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')
