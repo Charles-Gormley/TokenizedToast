@@ -100,19 +100,18 @@ for output in tqdm(content_archive, total=len(content_archive)):
 
     
     for article in articles:
-        logging.info("Starting Process of Processing new article")
+        logging.debug(f"Starting Process of Processing new article {article['articleID']}")
         if article == {}:
             continue
         elif article['unixTime'] == None:
             article['unixTime'] = int(datetime.now().timestamp())
-        logging.info("Processing Article")
+        logging.debug("Processing Article")
         article['articleID'] = create_unique_id(unique_ids)
         article["process"] = True
         content_lake.append(article)
-        print(article.keys())
 
         insert_database(article, 'articleContent')
-        logging.info(f"Finished Processing Article {article['articleID']}")
+        logging.debug(f"Finished Processing Article {article['articleID']}")
 
 logging.info(f"Amount of rss_feeds after processing: {len(rss_feeds)}")
 logging.info(f"Amount of Articles Processed: {len(content_lake)}")
@@ -121,8 +120,8 @@ logging.info(f"Amount of Articles Processed: {len(content_lake)}")
 # #### Process & Save Article Content
 new_df = pd.DataFrame(content_lake)
 logging.info(f"Length of Content Lake: {len(content_lake)}")
-logging.debug(f"New Dataframe Content Lake Head: {new_df.head()}")
-logging.debug(f"Length of new dataframe: {len(new_df)}")
+logging.info(f"New Dataframe Content Lake Head: {new_df.head()}")
+logging.info(f"Length of new dataframe: {len(new_df)}")
 
 new_df["to_encode"] = True
 
@@ -139,8 +138,8 @@ if not new_df.empty: # Check if any new articles even exist.
         except:
             df["to_encode"] = True # This column does not exists.
 
-        logging.debug(f"Old Dataframe Content Lake Head: {df.head()}")
-        logging.debug(f"Length of old dataframe: {len(df)}")
+        logging.info(f"Old Dataframe Content Lake Head: {df.head()}")
+        logging.info(f"Length of old dataframe: {len(df)}")
 
         seven_days_ago = datetime.now() - timedelta(days=7)
         df = df[df['unixTime'] >= seven_days_ago.timestamp()]
@@ -148,9 +147,9 @@ if not new_df.empty: # Check if any new articles even exist.
     except:
         concatenated_df = new_df
     
-    logging.debug(f"Length of Concatenated Dataframe: {len(concatenated_df)}")
+    logging.info(f"Length of Concatenated Dataframe: {len(concatenated_df)}")
     content_lake_dict = concatenated_df.to_dict(orient='records')
-    logging.debug(f"Length of Concatenated Dictionary: {len(content_lake_dict)}")
+    logging.info(f"Length of Concatenated Dictionary: {len(content_lake_dict)}")
 
     with open(f'/home/ec2-user/content-lake.json', 'w') as file:
         json.dump(content_lake_dict, file, indent=4)
@@ -160,6 +159,7 @@ if not new_df.empty: # Check if any new articles even exist.
 
 # #### Save RSS Feed back to S3
 # Removing Duplicates if they exist.
+logging.info("Saving RSS Feeds to S3")
 rss_feeds_df = pd.DataFrame(rss_feeds)
 rss_feeds_df = rss_feeds_df.drop_duplicates()
 rss_feeds = rss_feeds_df.to_dict('records')
@@ -168,13 +168,18 @@ with open(f'/home/ec2-user/{rss_file}', 'w') as file:
 os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
 
 ##### Save Article ID csv
+logging.info("Saving Unique Article IDs to S3")
 updated_series = pd.Series(list(unique_ids))
 updated_series.to_csv(f'/home/ec2-user/{article_id_file}', index=False, header=True)
 os.system(f"aws s3 cp /home/ec2-user/{article_id_file} s3://{bucket}/{article_id_file}")
 
 if not testing: # If we are not in testing mode I want the instance to shut off.
-    logging.info("Invoking Lambda")
-    os.system('aws lambda invoke --function-name "StartEncodingJob" lambda_output.txt') # Trigger Encoding Lambda.
+    logging.info("Invoking Encoding Lambda")
+    os.system('aws lambda invoke --function-name "StartEncodingJob" lambda_output.txt')
+
+    logging.info("Invoking RSS Extraction lambda Lambda")
+    os.system('aws lambda invoke --function-name "RSSExtractionFlickerBackOn" lambda_output.txt')
+    
 
     logging.info("Process Finished Shuting off ec2 instance")
     instance_id = "i-0ea95298232d8ed99"

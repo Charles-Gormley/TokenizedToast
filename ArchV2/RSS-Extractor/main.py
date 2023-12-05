@@ -40,6 +40,7 @@ while True: # Forever.
     
     while index < len(rss_feeds):
         rss = rss_feeds[index]
+        logging.debug(f"Index: {index}")
 
         url = rss['u']
         curUnixTime = rss['dt']
