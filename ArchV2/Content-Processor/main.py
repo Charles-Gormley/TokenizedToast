@@ -19,7 +19,7 @@ args = parser.parse_args()
 testing = args.testing
 
 ### Set up logging
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -91,7 +91,7 @@ for output in tqdm(content_archive, total=len(content_archive)):
     rss_feeds.remove(feed)
 
     feed['dt'] = max_date
-    feed['update'] = 0
+    feed['update'] = 1
     rss_feeds.append(feed)
 
     
@@ -110,11 +110,12 @@ for output in tqdm(content_archive, total=len(content_archive)):
         insert_database(article, 'articleContent')
         logging.info(f"Finished Processing Article {article['articleID']}")
 
+logging.info(f"Amount of Articles Processed: {len(content_lake)}")
 ############## Save Data ##############
 
 # #### Process & Save Article Content
 new_df = pd.DataFrame(content_lake)
-
+logging.info(f"Length of Content Lake: {len(content_lake)}")
 logging.debug(f"New Dataframe Content Lake Head: {new_df.head()}")
 logging.debug(f"Length of new dataframe: {len(new_df)}")
 

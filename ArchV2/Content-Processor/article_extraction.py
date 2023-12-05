@@ -24,12 +24,13 @@ def process_feed(feed: dict):
     else:
         try:
             output = output_queue.get_nowait()
-            logging.debug("Successful Thread!: %s", feed)
-            print("Output Max Date " + str(output['max_date']))
+            logging.info("Thread Succeeded Before Timeout: %s", feed)
             output["articles"]
+            logging.info("Thread Succeeded in ingesting articles: %s", feed)
             return output
         except:
-            logging.debug("Queue is empty, no output generated.")
+            logging.info("Thread Failed in ingesting articles: %s", feed)
+            logging.info("Queue is empty, no output generated.")
 
     return None
 
