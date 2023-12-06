@@ -23,7 +23,7 @@ with open(f'/home/ec2-user/content-lake.json', 'r') as file:
 content_df = pd.DataFrame(content_lake)
 logging.debug(f"Old Dataframe Content Lake Head: {content_df.head()}")
 logging.debug(f"Length of old dataframe: {len(content_df)}")
-content_df["to_encode"] = true
+content_df["to_encode"] = True
 
 ######### Encoding Content #########
 # Split dataframe into one that only has data that needs to processed
