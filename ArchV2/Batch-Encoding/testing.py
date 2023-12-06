@@ -40,7 +40,7 @@ old_embeddings = torch.load(f"/home/ec2-user/{embeddings_file}")
 logging.info(f"Old Torch Tensor Size : {old_embeddings['tensor'].size}")
 
 
-print(type(old_embeddings["tensor"])
+print(type(old_embeddings["tensor"]))
 
 # Filter out data older than 7 days
 seven_days_ago = datetime.now() - timedelta(days=7)
