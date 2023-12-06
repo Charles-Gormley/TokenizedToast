@@ -10,6 +10,8 @@ import logging
 import argparse
 import sys
 
+testing = False
+
 bucket = "toast-encodings"
 encoded_df_file = "encoded_df.feather"
 embeddings_file = 'embeddings.pth'
