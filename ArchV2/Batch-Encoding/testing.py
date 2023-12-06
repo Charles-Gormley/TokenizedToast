@@ -10,7 +10,7 @@ import logging
 import argparse
 import sys
 
-testing = False
+testing = True
 
 bucket = "toast-encodings"
 encoded_df_file = "encoded_df.feather"
