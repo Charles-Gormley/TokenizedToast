@@ -52,7 +52,7 @@ new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)
 
 concatenated_embeddings = {
     'articleID': torch.cat([old_data_filtered['articleID'], new_article_id_tensor]),
-    'tensor': torch.cat([old_data_filetered['tensor'], new_encoded_tensor]),
+    'tensor': torch.cat([old_data_filtered['tensor'], new_encoded_tensor]),
     'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
 }
 logging.info("Existing embeddings loaded and concatenated with new embeddings.")
