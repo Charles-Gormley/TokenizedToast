@@ -73,6 +73,7 @@ try:
         pass
     else:
         logging.info("Old Vector is not a tensor")
+        logging.info(f"Old Vector is type: {type(old_encoded_tensor)}")
         old_encoded_tensor = torch.tensor(old_encoded_tensor.tolist()) # Maybe change this.
 
     if torch.is_tensor(new_encoded_tensor):
@@ -80,6 +81,7 @@ try:
         pass
     else:
         logging.info("New Vector is not a tensor")
+        logging.info(f"New Vector is type: {type(new_encoded_tensor)}")
         new_encoded_tensor = torch.tensor(new_encoded_tensor.tolist()) # Maybe change this.
         
     
