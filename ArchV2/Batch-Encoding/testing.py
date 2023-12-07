@@ -48,7 +48,7 @@ old_data_filtered = {k: v[old_embeddings['unixTime'] >= seven_days_ago.timestamp
 
 new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
 new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
-new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
+new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0))
 
 concatenated_embeddings = {
     'articleID': torch.cat([old_data_filtered['articleID'], new_article_id_tensor]),
