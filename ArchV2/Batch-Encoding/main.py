@@ -68,6 +68,13 @@ try:
     new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
     
     # Checks. TODO: Delete later if old data processing is looking to be a tensor.
+    if torch.is_tensor(old_encoded_tensor):
+        logging.info("Old Vector is a tensor")
+        pass
+    else:
+        logging.info("Old Vector is not a tensor")
+        old_encoded_tensor = torch.tensor(old_encoded_tensor.tolist()) # Maybe change this.
+
     if torch.is_tensor(new_encoded_tensor):
         logging.info("New Vector is a tensor")
         pass
@@ -75,12 +82,7 @@ try:
         logging.info("New Vector is not a tensor")
         new_encoded_tensor = torch.tensor(new_encoded_tensor.tolist()) # Maybe change this.
         
-    if torch.is_tensor(old_encoded_tensor):
-        logging.info("Old Vector is a tensor")
-        pass
-    else:
-        logging.info("Old Vector is not a tensor")
-        old_encoded_tensor = torch.tensor(old_encoded_tensor.tolist()) # Maybe change this.
+    
 
 
 
