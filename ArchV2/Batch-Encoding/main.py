@@ -35,6 +35,7 @@ logging.debug(f"Length of old dataframe: {len(content_df)}")
 
 ######### Encoding Content #########
 # Split dataframe into one that only has data that needs to processed
+content_df['to_encode'] = True # TODO: Delete!!!
 process_df = content_df[content_df["to_encode"] == True]
 if testing:
     process_df = process_df.head()
