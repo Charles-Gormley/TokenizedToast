@@ -36,16 +36,11 @@ logging.debug(f"Length of old dataframe: {len(content_df)}")
 
 ######### Encoding Content #########
 # Split dataframe into one that only has data that needs to processed
-content_df['to_encode'] = True # TODO: Delete!!!
 process_df = content_df[content_df["to_encode"] == True]
-if testing:
-    process_df = process_df.head()
 
 encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
 
 if encoded_df.empty:
-    if testing:
-        sys.exit()
     ######### Exiting Script #########
     logging.info("Encoding Proces Finished Exiting Instance:")
     instance_id = "i-061dff9fc11bb2250"
@@ -76,6 +71,7 @@ try:
         logging.info("Old Vector is not a tensor")
         logging.info(f"Old Vector is type: {type(old_encoded_tensor)}")
         old_encoded_tensor = torch.stack(list(old_encoded_tensor)) # Maybe change this.
+        logging.info(f"Number of encoded old articles: {old_encoded_tensor.size()}")
 
     if torch.is_tensor(new_encoded_tensor):
         logging.info("New Vector is a tensor")
@@ -84,9 +80,7 @@ try:
         logging.info("New Vector is not a tensor")
         logging.info(f"New Vector is type: {type(new_encoded_tensor)}")
         new_encoded_tensor = torch.stack(list(new_encoded_tensor)) # Maybe change this.
-        
-    
-
+        logging.info(f"Number of encoded new articles: {new_encoded_tensor.size()}")
 
 
     concatenated_embeddings = {
@@ -94,6 +88,7 @@ try:
         'tensor': torch.cat([old_encoded_tensor, new_encoded_tensor]),
         'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
     }
+    logging.info(f"Number of Encoded Articles in System: {concatenated_embeddings['tensor'].size()}")
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
     torch.save(concatenated_embeddings, f"/home/ec2-user/{embeddings_file}")
     os.system(f"aws s3 cp /home/ec2-user/{embeddings_file} s3://{bucket}/{embeddings_file}")
