@@ -41,7 +41,9 @@ if testing:
 
 encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
 
-if encoded_df.empty and not testing:
+if encoded_df.empty:
+    if testing:
+        sys.exit()
     ######### Exiting Script #########
     logging.info("Encoding Proces Finished Exiting Instance:")
     instance_id = "i-061dff9fc11bb2250"
@@ -53,6 +55,7 @@ try:
     # Download the existing embeddings file from S3
     os.system(f"aws s3 cp s3://{bucket}/{embeddings_file} /home/ec2-user/{embeddings_file}")
     old_embeddings = torch.load(f"/home/ec2-user/{embeddings_file}")
+    logging.info("encoded_df ")
 
     # Filter out data older than 7 days
     seven_days_ago = datetime.now() - timedelta(days=7)
