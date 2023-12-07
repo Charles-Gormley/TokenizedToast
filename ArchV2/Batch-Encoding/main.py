@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import logging
 import argparse
 import sys
+import numpy as np
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
@@ -63,7 +64,7 @@ try:
     old_data_filtered = {k: v[old_embeddings['unixTime'] >= seven_days_ago.timestamp()] for k, v in old_embeddings.items()}
     old_encoded_tensor = old_data_filtered["tensor"]
 
-    new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0))
+    new_encoded_tensor = np.array(encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)))
     new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
     new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
     
@@ -82,7 +83,7 @@ try:
     else:
         logging.info("New Vector is not a tensor")
         logging.info(f"New Vector is type: {type(new_encoded_tensor)}")
-        new_encoded_tensor = torch.tensor(new_encoded_tensor.tolist()) # Maybe change this.
+        new_encoded_tensor = torch.stack(list(new_encoded_tensor)) # Maybe change this.
         
     
 
