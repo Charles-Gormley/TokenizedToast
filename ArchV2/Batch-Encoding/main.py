@@ -58,15 +58,32 @@ try:
     # Filter out data older than 7 days
     seven_days_ago = datetime.now() - timedelta(days=7)
     old_data_filtered = {k: v[old_embeddings['unixTime'] >= seven_days_ago.timestamp()] for k, v in old_embeddings.items()}
+    old_encoded_tensor = old_data_filtered["tensor"]
 
+    new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0))
     new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
     new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
-    new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0))
-    # new_encoded_tensor = torch.cat(encoded_df['tensor'].apply(lambda tensor: tensor.unsqueeze(0)))
+    
+    # Checks. TODO: Delete later if old data processing is looking to be a tensor.
+    if torch.is_tensor(new_encoded_tensor):
+        logging.info("New Vector is a tensor")
+        pass
+    else:
+        logging.info("New Vector is not a tensor")
+        new_encoded_tensor = torch.tensor(new_encoded_tensor.tolist()) # Maybe change this.
+        
+    if torch.is_tensor(old_encoded_tensor):
+        logging.info("Old Vector is a tensor")
+        pass
+    else:
+        logging.info("Old Vector is not a tensor")
+        old_encoded_tensor = torch.tensor(old_encoded_tensor.tolist()) # Maybe change this.
+
+
 
     concatenated_embeddings = {
         'articleID': torch.cat([old_data_filtered['articleID'], new_article_id_tensor]),
-        'tensor': torch.cat([old_data_filtered['tensor'], new_encoded_tensor]),
+        'tensor': torch.cat([old_encoded_tensor, new_encoded_tensor]),
         'unixTime': torch.cat([old_data_filtered['unixTime'], new_article_id_time])
     }
     logging.info("Existing embeddings loaded and concatenated with new embeddings.")
