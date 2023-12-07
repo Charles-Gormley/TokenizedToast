@@ -74,7 +74,7 @@ try:
     else:
         logging.info("Old Vector is not a tensor")
         logging.info(f"Old Vector is type: {type(old_encoded_tensor)}")
-        old_encoded_tensor = torch.tensor(old_encoded_tensor.tolist()) # Maybe change this.
+        old_encoded_tensor = torch.tensor(old_encoded_tensor) # Maybe change this.
 
     if torch.is_tensor(new_encoded_tensor):
         logging.info("New Vector is a tensor")
