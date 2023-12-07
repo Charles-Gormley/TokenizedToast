@@ -124,12 +124,12 @@ new_df = pd.DataFrame(content_lake)
 logging.info(f"Length of Content Lake: {len(content_lake)}")
 logging.info(f"New Dataframe Content Lake Head: {new_df.head()}")
 logging.info(f"Length of new dataframe: {len(new_df)}")
-
 new_df["to_encode"] = True
 
 if not new_df.empty: # Check if any new articles even exist.
 
     try: # Incase the content lake is empty
+        os.system("rm /home/ec2-user/content-lake.json")
         os.system(f"aws s3 cp s3://toast-daily-content/content-lake.json /home/ec2-user/content-lake.json")
         with open(f'/home/ec2-user/content-lake.json', 'r') as file:
             old_content_lake = json.load(file)
