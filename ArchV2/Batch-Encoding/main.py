@@ -61,7 +61,8 @@ try:
 
     new_article_id_time = torch.tensor(encoded_df['unixTime'].values)
     new_article_id_tensor = torch.tensor(encoded_df['articleID'].values)
-    new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0)).values
+    new_encoded_tensor = encoded_df['tensor'].apply(lambda tensor: tensor.squeeze(0))
+    # new_encoded_tensor = torch.cat(encoded_df['tensor'].apply(lambda tensor: tensor.unsqueeze(0)))
 
     concatenated_embeddings = {
         'articleID': torch.cat([old_data_filtered['articleID'], new_article_id_tensor]),
