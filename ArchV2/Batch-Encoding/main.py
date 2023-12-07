@@ -41,7 +41,7 @@ if testing:
 
 encoded_df = encode_dataframe_column(process_df, "content") # This needs (article id, data, and encoding.)
 
-if encoded_df.empty:
+if encoded_df.empty and not testing:
     ######### Exiting Script #########
     logging.info("Encoding Proces Finished Exiting Instance:")
     instance_id = "i-061dff9fc11bb2250"
