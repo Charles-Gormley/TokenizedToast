@@ -46,7 +46,7 @@ while True: # Forever.
         curUnixTime = rss['dt']
 
         if process_feed(url, curUnixTime): # Checking if new content exists.
-            rss['update'] = 0
+            rss['update'] = 1
 
         index += 1
         save_index(index)
