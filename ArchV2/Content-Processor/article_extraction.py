@@ -29,7 +29,7 @@ def process_feed(feed: dict):
             logging.info("Thread Succeeded in ingesting articles: %s", feed)
             return output
         except Exception as e:
-            logging.info("Thread Failed in ingesting articles: %s", feed, "with Error:", e)
+            logging.info("Thread Failed in ingesting articles: %s", feed)
             logging.info("Queue is empty, no output generated.")
 
     return None
@@ -70,7 +70,8 @@ def extract_feed(rss:dict, output_queue, stop_thread):
                 output['feed'] = rss
                 
     
-    except:
+    except Exception as e:
+        logging.info(f"Feed failed due to error: {e}")
         logging.debug("Feed Failed %s", feed_url)
         output['articles'] = articles
         output['max_date'] = max_date
