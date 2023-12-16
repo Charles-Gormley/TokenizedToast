@@ -19,7 +19,7 @@ def process_feed(feed: dict):
     thread.start()
     logging.debug(f"Thread Started: {feed}")
 
-    thread.join(timeout=60*5)
+    thread.join(timeout=90)
     if thread.is_alive():
         stop_thread.set()  # Signal the thread to stop
         logging.debug(f"Killing Thread: {feed}")
@@ -102,7 +102,7 @@ def extract_article(url):
     logging.debug("Starting Newspaper Article Extraction %s", url)
 
     config = newspaper.Config()
-    config.request_timeout = 2*60
+    config.request_timeout = 60
     article = newspaper.Article(url)
     logging.debug("Obtained Article %s", url)
 
