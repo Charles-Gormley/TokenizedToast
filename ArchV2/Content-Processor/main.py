@@ -75,8 +75,8 @@ with open(f'/home/ec2-user/{article_id_file}', 'r') as file:
 content_lake = []
 FEEDS = []
 for feed in rss_feeds:
-    if feed['update']:
-        FEEDS.append(feed)
+    # if feed['update']:
+    FEEDS.append(feed)
 
 if testing:
     FEEDS = FEEDS[-90:]    
