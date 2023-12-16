@@ -46,7 +46,14 @@ def extract_feed(rss:dict, output_queue, stop_thread):
         feed = feedparser.parse(feed_url)
 
         for entry in feed['entries']:
-            pub_date =  int(datetime.strptime(entry['published'], "%a, %d %b %Y %H:%M:%S %z").timestamp())
+            try:
+                pub_date =  int(datetime.strptime(entry['published'], "%a, %d %b %Y %H:%M:%S %z").timestamp())
+            except:
+                try:
+                    pub_date = int(datetime.strptime(entry['published'], "%Y-%m-%dT%H:%M:%SZ").timestamp())
+                except:
+                    pub_date = datetime.now() # TODO: this might need to get changed for an MVP it works
+            
             if pub_date > last_date:
                 logging.info("Passed Published date check")
                 link = entry.link
