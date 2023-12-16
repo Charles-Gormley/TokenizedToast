@@ -3,6 +3,7 @@ import feedparser
 import queue
 import threading
 import logging
+from dateutil import parser
 
 from datetime import datetime
 
@@ -35,9 +36,7 @@ def process_feed(rss, curUnixTime):
 def new_content(rss, curUnixTime, output_queue):
     try:
         feed = feedparser.parse(rss)
-        pub_date = feed['headers']['last-modified']
-        dt = datetime.strptime(pub_date, '%a, %d %b %Y %H:%M:%S GMT')
-        lastPubUnixTime = int(dt.timestamp())
+        lastPubUnixTime = int(parser.parse(feed['headers']['last-modified']).timestamp())
         if curUnixTime < lastPubUnixTime: # Last pub is older meaning new content exists since last check.
             output = True
         else:
