@@ -92,26 +92,7 @@ def extract_article(url):
     logging.debug("Starting Newspaper Article Extraction %s", url)
 
     config = newspaper.Config()
-    config.request_timeout = 45
-    article = newspaper.Article(url)
-    logging.debug("Obtained Article %s", url)
-
-
-    # download and parse the article
-    article.download()
-    logging.debug("Downloaded Article %s", url)
-
-    article.parse()
-    logging.debug("Parsed Article %s", url)
-
-    # extract the title and text of the article
-    title = article.title
-    text = article.text
-    
-    logging.debug("Starting Newspaper Article Extraction %s", url)
-
-    config = newspaper.Config()
-    config.request_timeout = 45
+    config.request_timeout = 2*60
     article = newspaper.Article(url)
     logging.debug("Obtained Article %s", url)
 
