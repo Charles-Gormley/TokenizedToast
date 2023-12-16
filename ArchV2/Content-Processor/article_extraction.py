@@ -28,8 +28,8 @@ def process_feed(feed: dict):
             output["articles"]
             logging.info("Thread Succeeded in ingesting articles: %s", feed)
             return output
-        except:
-            logging.info("Thread Failed in ingesting articles: %s", feed)
+        except Exception as e:
+            logging.info("Thread Failed in ingesting articles: %s", feed, "with Error:", e)
             logging.info("Queue is empty, no output generated.")
 
     return None
