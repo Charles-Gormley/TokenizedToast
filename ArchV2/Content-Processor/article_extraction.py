@@ -6,6 +6,7 @@ from datetime import datetime
 import queue
 import threading
 import logging
+from time import time
 
 def process_feed(feed: dict):
     output_queue = queue.Queue()
@@ -52,7 +53,7 @@ def extract_feed(rss:dict, output_queue, stop_thread):
                 try:
                     pub_date = int(datetime.strptime(entry['published'], "%Y-%m-%dT%H:%M:%SZ").timestamp())
                 except:
-                    pub_date = datetime.now() # TODO: this might need to get changed for an MVP it works
+                    pub_date = int(time()) # TODO: this might need to get changed for an MVP it works
             
             if pub_date > last_date:
                 logging.info("Passed Published date check")
