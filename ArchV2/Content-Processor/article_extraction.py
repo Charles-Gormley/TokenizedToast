@@ -1,6 +1,7 @@
 import newspaper
 import feedparser
 from datetime import datetime
+from dateutil import parser
 
 
 import queue
@@ -50,12 +51,10 @@ def extract_feed(rss:dict, output_queue, stop_thread):
             try:
                 pub_date =  int(datetime.strptime(entry['published'], "%a, %d %b %Y %H:%M:%S %z").timestamp())
             except:
-                pub_date = int(datetime.strptime(entry['published'], "%Y-%m-%dT%H:%M:%SZ").timestamp())
-                # try:
-                #     pub_date = int(datetime.strptime(entry['published'], "%Y-%m-%dT%H:%M:%SZ").timestamp())
-                # except:
-                #     pass # I don't want this because of fear of overcrowding or content that is redsipaly
-                #     # pub_date = int(time()) # TODO: this might need to get changed for an MVP it works
+                try:
+                    pub_date = int(datetime.strptime(entry['published'], "%Y-%m-%dT%H:%M:%SZ").timestamp())
+                except:
+                    pub_date = parser.parse(entry['published']).timestamp()
             
             if pub_date > last_date:
                 logging.info("Passed Published date check")
