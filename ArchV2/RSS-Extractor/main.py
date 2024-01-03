@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 import os
 import logging
-from time import sleep
+from time import sleep, time
 
 from feed_checking import process_feed
 
@@ -55,3 +55,12 @@ while True: # Forever.
             json.dump(rss_feeds, file, indent=4)
         os.system(f"aws s3 cp /home/ec2-user/{rss_file} s3://{bucket}/{rss_file}")
         logging.info(f"Processed URL: {url}")
+
+    try: # TODO: Remove try except blcok after vacation if calls successful
+        os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs-{str(int(time()))}.log")
+        os.remove('tmp/git_process.log')
+
+        os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/Feed-Checker/working-logs-{str(int(time()))}.log")
+        os.remove('tmp/temp.log')
+    except: 
+        pass

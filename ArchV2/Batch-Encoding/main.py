@@ -9,6 +9,7 @@ import logging
 import argparse
 import sys
 import numpy as np
+from time import time
 
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] [%(processName)s] [%(levelname)s] - %(message)s',
@@ -111,6 +112,15 @@ os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/
 
 ######### Exiting Script #########
 if not testing:
+    try: # TODO: Remove try except blcok after vacation if calls successful
+        os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleEncoding/git_logs-{str(int(time()))}.log")
+        os.remove('tmp/git_process.log')
+
+        os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/ArticleEncoding/working-logs-{str(int(time()))}.log")
+        os.remove('tmp/temp.log')
+    except: 
+        pass
+
     logging.info("Encoding Proces Finished Exiting Instance:")
     instance_id = "i-061dff9fc11bb2250"
     os.system(f'aws ec2 stop-instances --instance-ids {instance_id}')

@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
 import os
-from time import sleep
+from time import sleep, time
 from random import randint
 import multiprocessing
 import argparse
@@ -180,6 +180,19 @@ if not testing: # If we are not in testing mode I want the instance to shut off.
 
     logging.info("Invoking RSS Extraction lambda Lambda")
     os.system('aws lambda invoke --function-name "RSSExtractionFlickerBackOn" lambda_output.txt')
+
+    try: # TODO: Remove try except blcok after vacation if calls successful
+        os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleExtraction/git_logs-{str(int(time()))}.log")
+        os.remove('tmp/git_process.log')
+
+        os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/ArticleExtraction/working-logs-{str(int(time()))}.log")
+        os.remove('tmp/temp.log')
+    except: 
+        pass
+    
+
+    
+
     
 
     logging.info("Process Finished Shuting off ec2 instance")
