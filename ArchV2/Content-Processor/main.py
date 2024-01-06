@@ -183,10 +183,10 @@ if not testing: # If we are not in testing mode I want the instance to shut off.
 
     try: # TODO: Remove try except blcok after vacation if calls successful
         os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleExtraction/git_logs-{str(int(time()))}.log")
-        os.remove('tmp/git_process.log')
+        os.remove('/tmp/git_process.log')
 
         os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/ArticleExtraction/working-logs-{str(int(time()))}.log")
-        os.remove('tmp/temp.log')
+        os.remove('/tmp/temp.log')
     except: 
         pass
     
