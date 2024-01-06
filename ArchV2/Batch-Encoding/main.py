@@ -113,10 +113,10 @@ os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/
 ######### Exiting Script #########
 if not testing:
     try: # TODO: Remove try except blcok after vacation if calls successful
-        os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleEncoding/git_logs-{str(int(time()))}.log")
+        os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleEncoding/git_logs/{str(int(time()))}.log")
         os.remove('/tmp/git_process.log')
 
-        os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/ArticleEncoding/working-logs-{str(int(time()))}.log")
+        os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/ArticleEncoding/working-logs/{str(int(time()))}.log")
         os.remove('/tmp/temp.log')
     except: 
         pass
