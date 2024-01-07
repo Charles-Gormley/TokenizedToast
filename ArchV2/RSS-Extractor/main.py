@@ -29,14 +29,14 @@ except:
     index = 0
 
 try: # TODO: Remove try except blcok after vacation if calls successful
-    os.chmod("/tmp/git_process.log", 0o777)
-    os.chmod("/tmp/temp.log", 0o777)
-    
     os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs/{str(int(time()))}.log")
-    os.system('rm /tmp/git_process.log')
 
     os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/Feed-Checker/working-logs/{str(int(time()))}.log")
-    os.system('rm /tmp/temp.log')
+    
+    payload = '{"instance_id": "i-09d0b28eb3ef19362"}'
+    command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
+    os.system(command)
+    
 except: 
     pass
 

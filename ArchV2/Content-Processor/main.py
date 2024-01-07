@@ -182,14 +182,15 @@ if not testing: # If we are not in testing mode I want the instance to shut off.
     os.system('aws lambda invoke --function-name "RSSExtractionFlickerBackOn" lambda_output.txt')
 
     try: # TODO: Remove try except blcok after vacation if calls successful
-        os.chmod("/tmp/git_process.log", 0o777)
-        os.chmod("/tmp/temp.log", 0o777)
-        
         os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleExtraction/git_logs/{str(int(time()))}.log")
-        os.system('rm /tmp/git_process.log')
 
         os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/ArticleExtraction/working-logs/{str(int(time()))}.log")
-        os.system('rm /tmp/temp.log')
+
+        payload = '{"instance_id": "i-0ea95298232d8ed99"}'
+        command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
+        os.system(command)
+                  
+
     except: 
         pass
     
