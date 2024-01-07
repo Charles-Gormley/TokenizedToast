@@ -182,6 +182,9 @@ if not testing: # If we are not in testing mode I want the instance to shut off.
     os.system('aws lambda invoke --function-name "RSSExtractionFlickerBackOn" lambda_output.txt')
 
     try: # TODO: Remove try except blcok after vacation if calls successful
+        os.chmod("/tmp/git_process.log", 0o777)
+        os.chmod("/tmp/temp.log", 0o777)
+        
         os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/ArticleExtraction/git_logs/{str(int(time()))}.log")
         os.system('rm /tmp/git_process.log')
 

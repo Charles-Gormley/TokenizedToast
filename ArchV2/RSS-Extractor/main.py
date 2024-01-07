@@ -29,6 +29,9 @@ except:
     index = 0
 
 try: # TODO: Remove try except blcok after vacation if calls successful
+    os.chmod("/tmp/git_process.log", 0o777)
+    os.chmod("/tmp/temp.log", 0o777)
+    
     os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs/{str(int(time()))}.log")
     os.system('rm /tmp/git_process.log')
 
