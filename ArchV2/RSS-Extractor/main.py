@@ -30,10 +30,10 @@ except:
 
 try: # TODO: Remove try except blcok after vacation if calls successful
     os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs/{str(int(time()))}.log")
-    os.remove('/tmp/git_process.log')
+    os.system('rm /tmp/git_process.log')
 
     os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/Feed-Checker/working-logs/{str(int(time()))}.log")
-    os.remove('/tmp/temp.log')
+    os.system('rm /tmp/temp.log')
 except: 
     pass
 
