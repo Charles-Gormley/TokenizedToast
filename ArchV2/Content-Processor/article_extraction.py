@@ -65,6 +65,7 @@ def extract_feed(rss:dict, output_queue, stop_thread):
                 # Changing datetime format of pub_date
                 article = dict()
                 article['link'] = link
+                article['rss'] = feed_url
                 article['title'] = title
                 article['content'] = text
                 article['unixTime'] = pub_date
