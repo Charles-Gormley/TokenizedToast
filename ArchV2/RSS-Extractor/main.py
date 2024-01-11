@@ -28,6 +28,7 @@ try:
 except:
     index = 0
 
+logging.info("Log Data Cleanup")
 try: # TODO: Remove try except blcok after vacation if calls successful
     os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs/{str(int(time()))}.log")
 
@@ -57,8 +58,12 @@ while True: # Forever.
         url = rss['u']
         curUnixTime = rss['dt']
 
+        
         if process_feed(url, curUnixTime): # Checking if new content exists.
             rss['update'] = 1
+            logging.info(f"Rss Feed: {url} has new data at {curUnixTime}")
+        else:
+            logging.info(f"Rss Feed: {url} has no new data at {curUnixTime}")
 
         index += 1
         save_index(index)
