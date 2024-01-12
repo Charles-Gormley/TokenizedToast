@@ -2,6 +2,7 @@
 import json
 from datetime import datetime
 import os
+import subprocess
 import logging
 from time import sleep, time
 
@@ -33,10 +34,19 @@ try: # TODO: Remove try except blcok after vacation if calls successful
 
     os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/Feed-Checker/working-logs/{str(int(time()))}.log")
     
-    payload = '{"instance_id": "i-09d0b28eb3ef19362"}'
-    command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
-    print(command)
-    os.system(command)
-    
+    payload_dict = {"instance_id": "i-09d0b28eb3ef19362"}
+
+    # Convert the dictionary to a JSON string
+    payload_json = json.dumps(payload_dict)
+
+    # Define the AWS CLI command as a list of arguments
+    command = ["aws", "lambda", "invoke", 
+            "--function-name", "toastInstances-removeLogs", 
+            "--payload", payload_json, 
+            "output.json"]
+
+    # Execute the command
+    subprocess.run(command)
+        
 except: 
     pass
