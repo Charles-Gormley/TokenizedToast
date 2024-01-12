@@ -188,6 +188,7 @@ if not testing: # If we are not in testing mode I want the instance to shut off.
 
         payload = '{"instance_id": "i-0ea95298232d8ed99"}'
         command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
+        logging.info(command)
         os.system(command)
                   
 
