@@ -35,6 +35,7 @@ try: # TODO: Remove try except blcok after vacation if calls successful
     
     payload = '{"instance_id": "i-09d0b28eb3ef19362"}'
     command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
+    print(command)
     os.system(command)
     
 except: 
