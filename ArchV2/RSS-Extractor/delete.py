@@ -44,6 +44,8 @@ try: # TODO: Remove try except blcok after vacation if calls successful
             "--function-name", "toastInstances-removeLogs", 
             "--payload", payload_json, 
             "output.json"]
+    
+    print(command)
 
     # Execute the command
     subprocess.run(command)
