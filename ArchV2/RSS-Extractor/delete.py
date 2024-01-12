@@ -5,6 +5,7 @@ import os
 import subprocess
 import logging
 from time import sleep, time
+import base64
 
 from feed_checking import process_feed
 
@@ -36,19 +37,26 @@ try: # TODO: Remove try except blcok after vacation if calls successful
     
     payload_dict = {"instance_id": "i-09d0b28eb3ef19362"}
 
-    # Convert the dictionary to a JSON string
-    payload_json = json.dumps(payload_dict)
+    # Convert the dictionary to a JSON string and then to bytes
+    payload_bytes = json.dumps(payload_dict).encode('utf-8')
+
+    # Base64 encode the bytes
+    payload_base64 = base64.b64encode(payload_bytes).decode('utf-8')
 
     # Define the AWS CLI command as a list of arguments
     command = ["aws", "lambda", "invoke", 
             "--function-name", "toastInstances-removeLogs", 
-            "--payload", payload_json, 
+            "--payload", payload_base64, 
             "output.json"]
-    
-    print(command)
+
+    # Print command for debugging
+    print("Executing command:", ' '.join(command))
 
     # Execute the command
-    subprocess.run(command)
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    print("STDOUT:", result.stdout)
+    print("STDERR:", result.stderr)
         
 except: 
     pass
