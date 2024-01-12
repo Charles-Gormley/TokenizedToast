@@ -4,6 +4,8 @@ from datetime import datetime
 import os
 import logging
 from time import sleep, time
+import subprocess
+import base64
 
 from feed_checking import process_feed
 
@@ -33,10 +35,17 @@ try: # TODO: Remove try except blcok after vacation if calls successful
     os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs/{str(int(time()))}.log")
 
     os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/Feed-Checker/working-logs/{str(int(time()))}.log")
-    
-    payload = '{"instance_id": "i-09d0b28eb3ef19362"}'
-    command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
-    os.system(command)
+    payload_dict = {"instance_id": "i-09d0b28eb3ef19362"}
+    payload_bytes = json.dumps(payload_dict).encode('utf-8')
+
+    payload_base64 = base64.b64encode(payload_bytes).decode('utf-8') # base encode payload for aws-cli v2.
+
+    command = ["aws", "lambda", "invoke", 
+            "--function-name", "toastInstances-removeLogs", 
+            "--payload", payload_base64, 
+            "output.json"]
+
+    subprocess.run(command, capture_output=True, text=True)
     
 except: 
     pass
