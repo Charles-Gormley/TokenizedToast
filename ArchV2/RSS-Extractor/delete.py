@@ -1,34 +1,41 @@
-import pandas
+############## Libraries #############
 import json
 from datetime import datetime
-import feedparser
-from tqdm import tqdm
-
-import feed_checking
-
 import os
-from datetime import datetime
+import logging
+from time import sleep, time
 
-with open('rss-feeds.json', 'r') as file:
-    rss_feeds = json.load(file)
+from feed_checking import process_feed
 
+############## Config #############
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-current_time = datetime.now()
-currentUnixTime = int(current_time.timestamp())
-updated_feeds = [{"u": url, "dt": currentUnixTime} for url in rss_feeds if url != 0]
+# Load in the rss feeds v2
+bucket = 'rss-data-toast'
+rss_file = 'rss_feeds_v2.json'
 
-i = 0
-for i, rss in tqdm(enumerate(updated_feeds), total=len(updated_feeds)):
-    url = rss['u']
-    rss['dt'] = currentUnixTime
+def save_index(i:int):
+    with open("/home/ec2-user/index.txt", "w") as file:
+        file.write(str(i))
+
+def read_last_index():
+    with open("/home/ec2-user/index.txt", "r") as file:
+        content = file.read()
+        return int(content)
+
+try:
+    index = read_last_index()
+except:
+    index = 0
+
+try: # TODO: Remove try except blcok after vacation if calls successful
+    os.system(f"aws s3 cp /tmp/git_process.log s3://production-logs-tokenized-toast/Feed-Checker/git_logs/{str(int(time()))}.log")
+
+    os.system(f"aws s3 cp /tmp/temp.log s3://production-logs-tokenized-toast/Feed-Checker/working-logs/{str(int(time()))}.log")
     
-    if feed_checking.process_feed(url, currentUnixTime) == None:
-        updated_feeds.remove(rss)
-
-for i, rss in enumerate(updated_feeds):
-    url = rss['u']
-    rss['dt'] = currentUnixTime
-    rss['update'] = 1  # Meaning False
-
-with open('rss_feeds_v2.json', 'w') as file:
-    json.dump(updated_feeds, file, indent=4)
+    payload = '{"instance_id": "i-09d0b28eb3ef19362"}'
+    command = f'aws lambda invoke --function-name "toastInstances-removeLogs" --payload \'{payload}\' output.json'
+    os.system(command)
+    
+except: 
+    pass
