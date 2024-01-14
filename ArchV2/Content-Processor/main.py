@@ -139,11 +139,17 @@ if not new_df.empty: # Check if any new articles even exist.
         except:
             df["to_encode"] = True # This column does not exists.
 
-        logging.info(f"Old Dataframe Content Lake Head: {df.head()}")
-        logging.info(f"Length of old dataframe: {len(df)}")
+        old_df_size = len(df)
 
+        logging.info(f"Old Dataframe Content Lake Head: {df.head()}")
+        logging.info(f"Length of old dataframe: {old_df_size}")
+        
         seven_days_ago = datetime.now() - timedelta(days=7)
         df = df[df['unixTime'] >= seven_days_ago.timestamp()]
+
+        new_df_size = len(df)
+        logging.info(f"Amount of data points removed from date check: {old_df_size-new_df_size}")
+
         concatenated_df = pd.concat([df, new_df], ignore_index=True)
     except:
         concatenated_df = new_df
