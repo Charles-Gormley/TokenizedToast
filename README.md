@@ -7,7 +7,7 @@ AI-Curated Newsletter. Where we pull in current news articles daily, select arti
 
 
 # TokenizedToast
-AI-Curated Newsletter. Where we pull in current news articles daily, select articles for a particular user, and generate a short-educative newsletter based off of these articles.
+AI Generated Podcast. Where we pull in current news articles daily, select articles for a particular user, and generate a short-educative newsletter based off of these articles.
 
 ## Requirements
 * Python: 3.10
