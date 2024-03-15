@@ -110,6 +110,14 @@ logging.info("Inserting content back to s3 after finishing encoding process.")
 os.system(f"aws s3 cp /home/ec2-user/content-lake.json s3://toast-daily-content/content-lake.json")
 
 
+# Delete content-lake.json and embeddings.pth from ec2-user
+try:
+    os.system("rm /home/ec2-user/content-lake.json")
+    os.system(f"rm /home/ec2-user/{embeddings_file}")
+except Exception as e:
+    logging.error(f"Error: {e}")
+    pass
+
 ######### Exiting Script #########
 if not testing:
     try: # TODO: Remove try except blcok after vacation if calls successful
